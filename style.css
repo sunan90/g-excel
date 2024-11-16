@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-image: url('gmb.JPG'); /* Ganti dengan URL foto background */
+    background-image: url('gmb.JPG'); 
     background-size: cover;
     background-position: center;
     height: 100vh;
@@ -22,16 +22,18 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 20px rgb(0, 251, 25);
     width: 100%;
-    max-width: 500px; /* Lebar maksimum untuk form */
-    max-height: 80vh; /* Tinggi maksimum untuk kontainer */
+    max-width: 500px;
+    max-height: 80vh; 
     text-align: center;
-    overflow-y: auto; /* Izinkan gulir vertikal */
-    overflow-x: hidden; /* Sembunyikan gulir horizontal jika ada */
+    overflow-y: auto;
+    overflow-x: hidden; 
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(2px);
 }
 .logo img {
-    max-width: 20%; /* Atur lebar maksimum logo menjadi 80% dari kontainer */
-    height: auto; /* Memastikan tinggi disesuaikan dengan lebar */
-    margin-bottom: 20px; /* Menambahkan jarak di bawah logo */
+    max-width: 20%; 
+    height: auto;
+    margin-bottom: 20px;
 }
 
 h1, h2 {
@@ -93,7 +95,7 @@ button:hover {
 .form-section input[type="text"], 
 .form-section input[type="number"], 
 .form-section select {
-    width: calc(100% - 22px); /* Mengurangi padding dan border */
+    width: calc(100% - 22px); 
 }
 
 .form-section textarea {
@@ -103,5 +105,5 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-    resize: vertical; /* Memungkinkan resize vertikal */
+    resize: vertical; 
 }
