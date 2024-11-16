@@ -27,7 +27,7 @@ body {
     text-align: center;
     overflow-y: auto;
     overflow-x: hidden; 
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(2px);
 }
 .logo img {
