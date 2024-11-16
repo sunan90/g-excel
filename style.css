@@ -17,14 +17,16 @@ body {
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.326);
+    background: rgba(255, 255, 255, 0.237);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgb(0, 251, 25);
     width: 100%;
     max-width: 500px; /* Lebar maksimum untuk form */
+    max-height: 80vh; /* Tinggi maksimum untuk kontainer */
     text-align: center;
-    overflow: auto;
+    overflow-y: auto; /* Izinkan gulir vertikal */
+    overflow-x: hidden; /* Sembunyikan gulir horizontal jika ada */
 }
 .logo img {
     max-width: 20%; /* Atur lebar maksimum logo menjadi 80% dari kontainer */
