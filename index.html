@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png"/>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+        </div>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Masuk</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Mencegah pengiriman form default
+
+        // Ambil nilai username dan password (untuk keperluan validasi, jika diperlukan)
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Lakukan validasi login (ini hanya contoh, sebaiknya validasi dilakukan di server)
+        if (username === 'admin' && password === '123') { // Ganti dengan logika validasi yang sesuai
+            // Arahkan ke halaman penilai
+            window.location.href = 'penilai.html'; // Ganti dengan nama file halaman penilai Anda
+        } else {
+            alert('Username atau password salah!');
+        }
+    });
+</script>
+</body>
+</html>

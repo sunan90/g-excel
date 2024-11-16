@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekapitulasi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png"/>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e0e0e0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rekapitulasi Data</h1>
+        <div id="rekapData"></div>
+        <h2>Total</h2>
+        <div id="totalData"></div>
+        
+        <button id="saveButton">Simpan Final</button>
+        <button id="downloadButton">Unduh Data</button>
+        <button id="printButton">Print Data</button>
+        
+        <button onclick="window.location.href='form_tap1.html'">Kembali ke Form Tap 1</button>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script>
+        // Function to download data as Excel
+        function downloadExcel() {
+            const rekapData = document.getElementById('rekapData').innerText;
+            const totalData = document.getElementById('totalData').innerText;
+
+            // Prepare data for the worksheet
+            const data = [];
+            const rekapRows = rekapData.split('\n').map(row => row.split('\t'));
+            const totalRows = totalData.split('\n').map(row => row.split('\t'));
+
+            // Add headers
+            data.push(['Rekap Data']);
+            data.push(...rekapRows);
+            data.push([]);
+            data.push(['Total Data']);
+            data.push(...totalRows);
+
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "Data");
+            XLSX.writeFile(wb, "rekap_data.xlsx");
+        }
+
+        // Function to print data
+        function printData() {
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Print Data</title>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h1>Rekapitulasi Data</h1>');
+            printWindow.document.write('<h2>Data</h2>');
+            printWindow.document.write(document.getElementById('rekapData').innerHTML);
+            printWindow.document.write('<h2>Total</h2>');
+            printWindow.document.write(document.getElementById('totalData').innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Event listeners for buttons
+        document.getElementById('downloadButton').addEventListener('click', downloadExcel);
+        document.getElementById('printButton').addEventListener('click', printData);
+    </script>
+</body>
+</html>

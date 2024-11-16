@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Tap 3</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png"/>
+</head>
+<body>
+    <div class="container">
+        <h1>Form Tap 3</h1>
+        <form id="formTap3">
+            <h2>Sample Pohon ke 3</h2>
+            <input type="number" id="lukaKecil" placeholder="Luka Kecil" required>
+            <input type="number" id="lukaSedang" placeholder="Luka Sedang" required>
+            <input type="number" id="lukaBesar" placeholder="Luka Besar" required>
+            <input type="number" id="kurangDalam" placeholder="Kurang Dalam" required>
+            <input type="number" id="normatif" placeholder="Normatif" required>
+            <input type="number" id="rapat" placeholder="Rapat" required>
+            <input type="number" id="boros" placeholder="Boros" required>
+            <input type="number" id="sangatBoros" placeholder="Sangat Boros" required>
+            <input type="number" id="batasDepan" placeholder="Batas Depan" required>
+            <input type="number" id="batasBelakang" placeholder="Batas Belakang" required>
+            <input type="number" id="sotokan" placeholder="Sotokan" required>
+            <input type="number" id="petikan" placeholder="Petikan" required>
+            <input type="number" id="lebih45" placeholder="> 45" required>
+            <input type="number" id="kurang35" placeholder="< 35" required>
+            <input type="number" id="bergelombang" placeholder="Bergelombang" required>
+            <input type="number" id="mangkok" placeholder="Mangkok" required>
+            <input type="number" id="bowl" placeholder="Bowl" required>
+            <input type="number" id="pohonTidakDisadap" placeholder="Pohon tidak disadap" required>
+            <input type="number" id="talangMepet" placeholder="Talang Mepet" required>
+            <button type="submit">Simpan</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('formTap3').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah pengiriman form default
+
+            // Mengambil data dari input
+            const data = {
+                lukaKecil: document.getElementById('lukaKecil').value,
+                lukaSedang: document.getElementById('lukaSedang').value,
+                lukaBesar: document.getElementById('lukaBesar').value,
+                kurangDalam: document.getElementById('kurangDalam').value,
+                normatif: document.getElementById('normatif').value,
+                rapat: document.getElementById('rapat').value,
+                boros: document.getElementById('boros').value,
+                sangatBoros: document.getElementById('sangatBoros').value,
+                batasDepan: document.getElementById('batasDepan').value,
+                batasBelakang: document.getElementById('batasBelakang').value,
+                sotokan: document.getElementById('sotokan').value,
+                petikan: document.getElementById('petikan').value,
+                lebih45: document.getElementById('lebih45').value,
+                kurang35: document.getElementById('kurang35').value,
+                bergelombang: document.getElementById('bergelombang').value,
+                mangkok: document.getElementById('mangkok').value,
+                bowl: document.getElementById('bowl').value,
+                pohonTidakDisadap: document.getElementById('pohonTidakDisadap').value,
+                talangMepet: document.getElementById('talangMepet').value
+            };
+
+            // Simpan data ke localStorage
+            localStorage.setItem('formDataTap3', JSON.stringify(data));
+
+            // Arahkan ke halaman form_tap4.html
+            window.location.href = 'form_tap4.html';
+        });
+    </script>
+</body>
+</html>

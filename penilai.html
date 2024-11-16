@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penilai</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png"/>
+</head>
+<body>
+    <div class="container">
+        <h1>Penilai</h1>
+        <form id="penilaiForm">
+            <input type="text" id="tanggal" placeholder="Tanggal" readonly>
+            <input type="text" placeholder="Penilai" required>
+            <select required>
+                <option value="">Afdeling</option>
+                <option value="Kalimayang">Kalimayang</option>
+                <option value="Kalibajing">Kalibajing</option>
+                <option value="Sumber Waringin">Sumber Waringin</option>
+                <option value="Gambiran">Gambiran</option>
+                <option value="Gunung Mayang">Gunung Mayang</option>
+                <option value="Dampar">Dampar</option>
+            </select>
+            <input type="text" placeholder="Nama Penyadap" required>
+            <input type="text" placeholder="Tahun Tanam" required>
+            <select required>
+                <option value="">Blok</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+            <button type="submit">Simpan</button>
+        </form>
+    </div>
+    <script>
+        // Mengisi input tanggal dengan tanggal hari ini
+        document.getElementById('tanggal').value = new Date().toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Menangani pengiriman form
+        document.getElementById('penilaiForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah pengiriman form default
+
+            // Simpan data jika perlu (misalnya ke localStorage atau backend)
+
+            // Arahkan ke halaman form_tap1.html
+            window.location.href = 'form_tap1.html';
+        });
+    </script>
+</body>
+</html>
