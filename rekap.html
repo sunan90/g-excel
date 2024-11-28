@@ -3,132 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekapitulasi</title>
+    <title>Rekap Total</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo.png"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
+        body {
+            font-family: Arial, sans-serif;
         }
-        th, td {
-            border: 1px solid #000;
-            padding: 8px;
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1 {
             text-align: center;
         }
-        th {
-            background-color: #f2f2f2;
-        }
-        .total-row {
+        .total {
+            margin-top: 20px;
             font-weight: bold;
-            background-color: #e0e0e0;
+            font-size: 1.5em;
+        }
+        .details {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .classification {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+        .photo {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
         }
         button {
-            margin: 5px;
+            display: block;
+            margin: 10px auto;
             padding: 10px 15px;
-            font-size: 16px;
+            font-size: 1em;
+            cursor: pointer;
         }
-        #preview {
-            margin-top: 20px;
-            max-width: 300px;
-            max-height: 300px;
-            border: 1px solid #ccc;
-            display: none; /* Sembunyikan gambar pada awalnya */
+        @media print {
+            button {
+                display: auto; /* Sembunyikan tombol saat mencetak */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Rekapitulasi Data</h1>
-        <div id="rekapData"></div>
-        <h2>Total</h2>
-        <div id="totalData"></div>
-        
-        <button id="saveButton">Simpan Final</button>
-        <button id="downloadButton">Unduh Data</button>
-        <button id="printButton">Print Data</button>
-
-        <!-- Upload Foto Penyadap -->
-        <h2>Upload Foto Penyadap</h2>
-        <input type="file" id="fileInput" accept="image/*">
-        <img id="preview" src="" alt="Preview Gambar">
-
-        <div class="mapouter">
-            <div class="gmap_canvas">
-                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=glantangan&amp;t=h&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-                <a href="https://joy.link/fmhybak">fmhy</a>
-            </div>
-            <style>
-                .mapouter{position:relative;text-align:right;width:100%;height:400px;}
-                .gmap_canvas {overflow:hidden;background:none!important;width:100%;height:400px;}
-                .gmap_iframe {height:400px!important;}
-            </style>
-        </div>
-        
-        <button onclick="window.location.href='penilai.html'">Kembali ke penilai</button>
+    <div class="container" id="printArea">
+        <h1>Rekap Total</h1>
+        <div class="details" id="evaluatorDetails"></div>
+        <img id="evaluatorPhoto" class="photo" src="" alt="Foto Penyadap" style="display: none;" />
+        <div class="total" id="totalSum">Total: 0</div>
+        <div class="classification" id="classificationResult">Kelas: N/A</div>
+        <button onclick="window.location.href='index.html'">Kembali</button>
+        <button onclick="downloadData()">Unduh Data (Excel)</button>
+        <button onclick="printData()">Print Data</button>
     </div>
-    <script src="script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
     <script>
-        // Function to download data as Excel
-        function downloadExcel() {
-            const rekapData = document.getElementById('rekapData').innerText;
-            const totalData = document.getElementById('totalData').innerText;
+        // Mengambil data dari localStorage
+        const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
+        const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
+        const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
+        const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
+        const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
+        const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
 
-            // Prepare data for the worksheet
-            const data = [];
-            const rekapRows = rekapData.split('\n').map(row => row.split('\t'));
-            const totalRows = totalData.split('\n').map(row => row.split('\t'));
+        // Menampilkan detail penilai
+        if (evaluatorData) {
+            const evaluatorDetails = `
+                <p><strong>Tanggal:</strong> ${evaluatorData.tanggal || 'N/A'}</p>
+                <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
+                <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
+                <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
+                <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
+                <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
+            `;
+            document.getElementById('evaluatorDetails').innerHTML = evaluatorDetails;
 
-            // Add headers
-            data.push(['Rekap Data']);
-            data.push(...rekapRows);
-            data.push([]);
-            data.push(['Total Data']);
-            data.push(...totalRows);
-
-            // Create a new workbook
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            XLSX.utils.book_append_sheet(wb, ws, "Data");
-            XLSX.writeFile(wb, "rekap_data.xlsx");
-        }
-
-        // Function to print data
-        function printData() {
-            const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<html><head><title>Print Data</title>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write('<h1>Rekapitulasi Data</h1>');
-            printWindow.document.write('<h2>Data</h2>');
-            printWindow.document.write(document.getElementById('rekapData').innerHTML);
-            printWindow.document.write('<h2>Total</h2>');
-            printWindow.document.write(document.getElementById('totalData').innerHTML);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        // Event listeners for buttons
-        document.getElementById('downloadButton').addEventListener('click', downloadExcel);
-        document.getElementById('printButton').addEventListener('click', printData);
-
-        // Function to handle image upload
-        const fileInput = document.getElementById('fileInput');
-        const preview = document.getElementById('preview');
-
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block'; // Menampilkan gambar
-                }
-                reader.readAsDataURL(file);
+            // Menampilkan foto penyadap jika ada
+            const photoUrl = evaluatorData.fotoPenyadap;
+            if (photoUrl) {
+                const photoElement = document.getElementById('evaluatorPhoto');
+                photoElement.src = photoUrl;
+                photoElement.style.display = 'block';
             }
-        });
+        }
+
+        // Menghitung total
+        const total = [
+            formDataTap1,
+            formDataTap2,
+            formDataTap3,
+            formDataTap4,
+            formDataTap5
+        ].reduce((acc, data) => {
+            if (data) {
+                return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
+            }
+            return acc;
+        }, 0).toFixed(2);
+
+        // Menampilkan total
+        document.getElementById('totalSum').innerText = `Total: ${total}`;
+
+        // Menentukan kelas berdasarkan total
+        let classification = 'N/A';
+        const totalValue = parseFloat(total);
+        if (totalValue < 15) {
+            classification = 'Kelas A';
+        } else if (totalValue >= 16 && totalValue <= 25) {
+            classification = 'Kelas B';
+        } else if (totalValue > 25) {
+            classification = 'Kelas C';
+        }
+
+        // Menampilkan kelas
+        document.getElementById('classificationResult').innerText = `Kelas: ${classification}`;
+
+        // Fungsi untuk mencetak data langsung
+        function printData() {
+            setTimeout(() => {
+                window.print(); // Memanggil dialog pencetakan browser setelah jeda
+            }, 100); // Jeda 100ms untuk memastikan konten sudah siap
+        }
     </script>
 </body>
 </html>
