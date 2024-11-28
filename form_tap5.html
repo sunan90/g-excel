@@ -6,6 +6,12 @@
     <title>Form Tap 5</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo.png"/>
+    <style>
+        .total {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -31,6 +37,7 @@
             <input type="number" id="bowl" placeholder="Bowl" required>
             <input type="number" id="pohonTidakDisadap" placeholder="Pohon tidak disadap" required>
             <input type="number" id="talangMepet" placeholder="Talang Mepet" required>
+            <div class="total" id="totalSum">Total: 0</div> <!-- Tempat untuk menampilkan total -->
             <button type="submit">Simpan</button>
         </form>
     </div>
@@ -39,34 +46,38 @@
         document.getElementById('formTap5').addEventListener('submit', function(event) {
             event.preventDefault(); // Mencegah pengiriman form default
 
-            // Mengambil data dari input
+            // Mengambil data dari input dan membaginya dengan nilai yang sesuai
             const data = {
-                lukaKecil: document.getElementById('lukaKecil').value,
-                lukaSedang: document.getElementById('lukaSedang').value,
-                lukaBesar: document.getElementById('lukaBesar').value,
-                kurangDalam: document.getElementById('kurangDalam').value,
-                normatif: document.getElementById('normatif').value,
-                rapat: document.getElementById('rapat').value,
-                boros: document.getElementById('boros').value,
-                sangatBoros: document.getElementById('sangatBoros').value,
-                batasDepan: document.getElementById('batasDepan').value,
-                batasBelakang: document.getElementById('batasBelakang').value,
-                sotokan: document.getElementById('sotokan').value,
-                petikan: document.getElementById('petikan').value,
-                lebih45: document.getElementById('lebih45').value,
-                kurang35: document.getElementById('kurang35').value,
-                bergelombang: document.getElementById('bergelombang').value,
-                mangkok: document.getElementById('mangkok').value,
-                bowl: document.getElementById('bowl').value,
-                pohonTidakDisadap: document.getElementById('pohonTidakDisadap').value,
-                talangMepet: document.getElementById('talangMepet').value
+                lukaKecil: parseFloat(document.getElementById('lukaKecil').value) / 3 || 0,
+                lukaSedang: parseFloat(document.getElementById('lukaSedang').value) / 5 || 0,
+                lukaBesar: parseFloat(document.getElementById('lukaBesar').value) / 7 || 0,
+                kurangDalam: parseFloat(document.getElementById('kurangDalam').value) / 2 || 0,
+                normatif: parseFloat(document.getElementById('normatif').value) / 0.1 || 0, // Pastikan tidak membagi dengan 0
+                rapat: parseFloat(document.getElementById('rapat').value) / 4 || 0,
+                boros: parseFloat(document.getElementById('boros').value) / 6 || 0,
+                sangatBoros: parseFloat(document.getElementById('sangatBoros').value) / 10 || 0,
+                batasDepan: parseFloat(document.getElementById('batasDepan').value) / 2 || 0,
+                batasBelakang: parseFloat(document.getElementById('batasBelakang').value) / 2 || 0,
+                sotokan: parseFloat(document.getElementById('sotokan').value) / 5 || 0,
+                petikan: parseFloat(document.getElementById('petikan').value) / 5 || 0,
+                lebih45: parseFloat(document.getElementById('lebih45').value) / 3 || 0,
+                kurang35: parseFloat(document.getElementById('kurang35').value) / 3 || 0,
+                bergelombang: parseFloat(document.getElementById('bergelombang').value) / 2 || 0,
+                mangkok: parseFloat(document.getElementById('mangkok').value) / 3 || 0,
+                bowl: parseFloat(document.getElementById('bowl').value) / 2 || 0,
+                pohonTidakDisadap: parseFloat(document.getElementById('pohonTidakDisadap').value) / 10 || 0,
+                talangMepet: parseFloat(document.getElementById('talangMepet').value) / 1 || 0
             };
+
+            // Menghitung total
+            const total = Object.values(data).reduce((acc, curr) => acc + curr, 0);
+            document.getElementById('totalSum').innerText = `Total: ${total.toFixed(2)}`; // Menampilkan total dengan 2 desimal
 
             // Simpan data ke localStorage
             localStorage.setItem('formDataTap5', JSON.stringify(data));
 
-            // Arahkan ke halaman rekap.html
-            window.location.href = 'rekap.html';
+            // Arahkan ke halaman upload.html
+            window.location.href = 'upload.html';
         });
     </script>
 </body>
