@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Foto Penyadap</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png"/>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Foto Penyadap</h1>
+        <input type="file" id="photoInput" accept="image/*" />
+        <button id="uploadButton">Upload</button>
+        <button onclick="window.location.href='rekap.html'">Lihat Rekap</button>
+    </div>
+
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('photoInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Simpan foto ke localStorage
+                    const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
+                    evaluatorData.fotoPenyadap = e.target.result; // Simpan data URL gambar
+                    localStorage.setItem('penilaiData', JSON.stringify(evaluatorData));
+                    alert('Foto berhasil diupload!');
+                };
+                reader.readAsDataURL(file); // Membaca file sebagai data URL
+            } else {
+                alert('Silakan pilih file gambar terlebih dahulu.');
+            }
+        });
+    </script>
+</body>
+</html>
