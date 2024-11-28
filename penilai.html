@@ -12,8 +12,8 @@
         <h1>Penilai</h1>
         <form id="penilaiForm">
             <input type="text" id="tanggal" placeholder="Tanggal" readonly>
-            <input type="text" placeholder="Penilai" required>
-            <select required>
+            <input type="text" id="penilai" placeholder="Penilai" required>
+            <select id="afdeling" required>
                 <option value="">Afdeling</option>
                 <option value="Kalimayang">Kalimayang</option>
                 <option value="Kalibajing">Kalibajing</option>
@@ -22,9 +22,9 @@
                 <option value="Gunung Mayang">Gunung Mayang</option>
                 <option value="Dampar">Dampar</option>
             </select>
-            <input type="text" placeholder="Nama Penyadap" required>
-            <input type="text" placeholder="Tahun Tanam" required>
-            <select required>
+            <input type="text" id="namaPenyadap" placeholder="Nama Penyadap" required>
+            <input type="text" id="tahunTanam" placeholder="Tahun Tanam" required>
+            <select id="blok" required>
                 <option value="">Blok</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
@@ -45,7 +45,17 @@
         document.getElementById('penilaiForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Mencegah pengiriman form default
 
-            // Simpan data jika perlu (misalnya ke localStorage atau backend)
+            // Simpan data penilai ke localStorage
+            const evaluatorData = {
+                tanggal: document.getElementById('tanggal').value,
+                penilai: document.getElementById('penilai').value,
+                afdeling: document.getElementById('afdeling').value,
+                namaPenyadap: document.getElementById('namaPenyadap').value,
+                tahunTanam: document.getElementById('tahunTanam').value,
+                blok: document.getElementById('blok').value
+            };
+
+            localStorage.setItem('penilaiData', JSON.stringify(evaluatorData));
 
             // Arahkan ke halaman form_tap1.html
             window.location.href = 'form_tap1.html';
