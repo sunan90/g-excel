@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Rekap Total</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #qrcode {
+            margin-top: 20px;
+            border: 1px solid #000; /* Tambahkan border untuk membuatnya terlihat kotak */
+            display: inline-block; /* Agar border hanya mengelilingi QR Code */
+            padding: 10px; /* Tambahkan padding di dalam kotak */
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Rekap Total</h1>
+    <div id="qrcode"></div>
+    <button onclick="window.location.href='index.html'">Kembali</button>
+
+    <script>
+        // Mengambil data barcode dari localStorage
+        const barcodeData = localStorage.getItem('barcodeData') || 'N/A';
+
+        // Menggenerate QR Code
+        $('#qrcode').qrcode({
+            text: barcodeData,
+            width: 200, // Sesuaikan lebar QR Code
+            height: 200 // Sesuaikan tinggi QR Code
+        });
+    </script>
+</body>
+</html>
