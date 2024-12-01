@@ -76,7 +76,7 @@
         const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
         const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
         const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
-
+    
         // Menampilkan detail penilai
         if (evaluatorData) {
             const evaluatorDetails = `
@@ -88,7 +88,7 @@
                 <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
             `;
             document.getElementById('evaluatorDetails').innerHTML = evaluatorDetails;
-
+    
             // Menampilkan foto penyadap jika ada
             const photoUrl = evaluatorData.fotoPenyadap;
             if (photoUrl) {
@@ -97,7 +97,7 @@
                 photoElement.style.display = 'block';
             }
         }
-
+    
         // Menghitung total
         const total = [
             formDataTap1,
@@ -111,10 +111,10 @@
             }
             return acc;
         }, 0).toFixed(2);
-
+    
         // Menampilkan total
         document.getElementById('totalSum').innerText = `Total: ${total}`;
-
+    
         // Menentukan kelas berdasarkan total
         let classification = 'N/A';
         const totalValue = parseFloat(total);
@@ -125,15 +125,38 @@
         } else if (totalValue > 25) {
             classification = 'Kelas C';
         }
-
+    
         // Menampilkan kelas
         document.getElementById('classificationResult').innerText = `Kelas: ${classification}`;
-
+    
         // Fungsi untuk mencetak data langsung
         function printData() {
             setTimeout(() => {
                 window.print(); // Memanggil dialog pencetakan browser setelah jeda
             }, 100); // Jeda 100ms untuk memastikan konten sudah siap
+        }
+    
+        // Fungsi untuk mengunduh data dalam format Excel
+        function downloadData() {
+            // Mengumpulkan data yang akan dimasukkan ke dalam Excel
+            const data = [
+                ["Tanggal", evaluatorData.tanggal || 'N/A'],
+                ["Penilai", evaluatorData.penilai || 'N/A'],
+                ["Afdeling", evaluatorData.afdeling || 'N/A'],
+                ["Nama Penyadap", evaluatorData.namaPenyadap || 'N/A'],
+                ["Tahun Tanam", evaluatorData.tahunTanam || 'N/A'],
+                ["Blok", evaluatorData.blok || 'N/A'],
+                ["Total", total],
+                ["Kelas", classification]
+            ];
+    
+            // Mengonversi data menjadi worksheet
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Rekap Total");
+    
+            // Mengunduh file Excel
+            XLSX.writeFile(wb, "rekap_total.xlsx");
         }
     </script>
 </body>
