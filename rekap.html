@@ -66,6 +66,7 @@
         <button onclick="window.location.href='index.html'">Kembali</button>
         <button onclick="downloadData()">Unduh Data (Excel)</button>
         <button onclick="printData()">Print Data</button>
+        <button onclick="goToBarcodePage()">Tampilkan Barcode</button>
     </div>
 
     <script>
@@ -135,6 +136,11 @@
                 window.print(); // Memanggil dialog pencetakan browser setelah jeda
             }, 100); // Jeda 100ms untuk memastikan konten sudah siap
         }
+        function goToBarcodePage() {
+            const barcodeData = `${evaluatorData.tanggal || ''}-${evaluatorData.penilai || ''}-${evaluatorData.afdeling || ''}-${evaluatorData.namaPenyadap || ''}-${evaluatorData.tahunTanam || ''}-${evaluatorData.blok || ''}`;
+            localStorage.setItem('barcodeData', barcodeData);
+            window.location.href = 'barcode.html';
+    }
     
         // Fungsi untuk mengunduh data dalam format Excel
         function downloadData() {
