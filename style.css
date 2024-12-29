@@ -30,6 +30,7 @@ body {
     backdrop-filter: blur(3px); /* Tambahkan efek blur */
     -webkit-backdrop-filter: blur(2px); /* Untuk Safari */
 }
+
 .logo img {
     max-width: 20%; /* Atur lebar maksimum logo menjadi 80% dari kontainer */
     height: auto; /* Memastikan tinggi disesuaikan dengan lebar */
@@ -65,6 +66,7 @@ button:hover {
     background-color: #218838;
 }
 
+/* Footer with Scrolling Text */
 .footer {
     width: 100%;
     position: fixed;
@@ -74,12 +76,14 @@ button:hover {
     color: #fff;
     text-align: center;
     padding: 10px 0;
+    z-index: 10; /* Pastikan footer tidak tertutup oleh elemen lain */
 }
 
 .footer p {
     display: inline-block;
     white-space: nowrap;
     animation: scrollText 10s linear infinite;
+    font-size: 16px; /* Atur ukuran font sesuai kebutuhan */
 }
 
 @keyframes scrollText {
