@@ -17,66 +17,150 @@
     <div class="container">
         <h1>Form Tap 4</h1>
         <form id="formTap4">
-            <h2>Sample Pohon ke 4</h2>
-            <input type="number" id="lukaKecil" placeholder="Luka Kecil" min="0" max="1" required>
-            <input type="number" id="lukaSedang" placeholder="Luka Sedang" min="0" max="1"  required>
-            <input type="number" id="lukaBesar" placeholder="Luka Besar" min="0" max="1" required>
-            <input type="number" id="kurangDalam" placeholder="Kurang Dalam" min="0" max="1" required>
-            <input type="number" id="normatif" placeholder="Normatif" min="0" max="1"  required>
-            <input type="number" id="rapat" placeholder="Rapat" min="0" max="1"  required>
-            <input type="number" id="boros" placeholder="Boros" min="0" max="1"  required>
-            <input type="number" id="sangatBoros" placeholder="Sangat Boros" min="0" max="1"  required>
-            <input type="number" id="batasDepan" placeholder="Batas Depan" min="0" max="1"  required>
-            <input type="number" id="batasBelakang" placeholder="Batas Belakang" min="0" max="1"  required>
-            <input type="number" id="sotokan" placeholder="Sotokan" min="0" max="1"  required>
-            <input type="number" id="petikan" placeholder="Petikan" min="0" max="1"  required>
-            <input type="number" id="lebih45" placeholder="> 45" min="0" max="1"  required>
-            <input type="number" id="kurang35" placeholder="< 35" min="0" max="1"  required>
-            <input type="number" id="bergelombang" placeholder="Bergelombang" min="0" max="1"  required>
-            <input type="number" id="mangkok" placeholder="Mangkok" min="0" max="1"  required>
-            <input type="number" id="bowl" placeholder="Bowl" min="0" max="1"  required>
-            <input type="number" id="pohonTidakDisadap" placeholder="Pohon tidak disadap" min="0" max="1"  required>
-            <input type="number" id="talangMepet" placeholder="Talang Mepet" min="0" max="1"  required>
+        <h2>Sample Pohon ke 4</h2>
+        <h2>A. UTAMA</h2>
+            <label for="lukaKayu">Luka Kayu</label>
+            <select id="lukaKayu" required>
+                <option value="">Pilih Luka</option>
+                <option value="3">Luka Kecil (Nilai: 3)</option>
+                <option value="5">Luka Sedang (Nilai: 5)</option>
+                <option value="7">Luka Besar (Nilai: 7)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="kedalamansadap">Kedalaman Sadap</label>
+            <select id="kedalamansadap" required>
+                <option value="">Pilih Kedalaman</option>
+                <option value="2">Kurang Dalam (Nilai: 2)</option>
+                <option value="0">Normatif (Nilai: 0)</option>
+                <option value="4">Rapat (Nilai: 4)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="pemakaiankulit">Pemakaian Kulit</label>
+            <select id="pemakaiankulit" required>
+                <option value="">Pilih Pemakaian</option>
+                <option value="6">Boros (Nilai: 6)</option>
+                <option value="10">Sangat Boros (Nilai: 10)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <h2>B. PENDUKUNG</h2>
+            <label for="tehnikska">Tehnik SKA</label>
+            <select id="tehnikska" required>
+                <option value="">Pilih Tehnik</option>
+                <option value="3">Tidak Pakai Tangga (Nilai: 3)</option>
+                <option value="5">Tidak Pakai Pacekung (Nilai: 5)</option>
+                <option value="7">Sotokan (Nilai: 7)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="irisansadap">Irisan Sadap</label>
+            <select id="irisansadap" required>
+                <option value="">Pilih Irisan</option>
+                <option value="2">IMBD (Nilai: 2)</option>
+                <option value="2">IMBB (Nilai: 2)</option>
+                <option value="2">ITSBD (Nilai: 2)</option>
+                <option value="2">ITSBB (Nilai: 2)</option>
+                <option value="5">TAS (Nilai: 5)</option>
+                <option value="5">TAP (Nilai: 5)</option>
+                <option value="10">Tebal Tatal (Nilai: 10)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="sudutsadap">Sudut Sadap</label>
+            <select id="sudutsadap" required>
+                <option value="">Pilih Sudut</option>
+                <option value="3">>45 Derajat (Nilai: 3)</option>
+                <option value="3"><35 derajat (Nilai: 3)</option>
+                <option value="2">Bergelombang (Nilai: 2)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="ambilscrap">Pengambilan Scrap</label>
+            <select id="ambilscrap" required>
+                <option value="">Pilih Scrap</option>
+                <option value="0">Diambil (Nilai: 0)</option>
+                <option value="2">Tidak Diambil (Nilai: 2)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="peralatantidaklengkap">Peralatan Tidak Lengkap</label>
+            <select id="peralatantidaklengkap" required>
+                <option value="">Pilih Peralatan</option>
+                <option value="2">Talang (Nilai: 2)</option>
+                <option value="3">Mangkok (Nilai: 3)</option>
+                <option value="1">Talang Pancing (Paku) (Nilai: 1)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="kebersihanalat">Kebersihan Alat</label>
+            <select id="kebersihanalat" required>
+                <option value="">Pilih Alat</option>
+                <option value="1">Talang (Nilai: 1)</option>
+                <option value="1">Mangkok (Nilai: 1)</option>
+                <option value="2">Ember Kolotan (Nilai: 2)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="pohontidakdisadap">Pohon Tidak Disadap</label>
+            <select id="pohonTidakdisadap" required>
+                <option value="">Pilih Pohon</option>
+                <option value="10">Pohon Tidak Disadap (Nilai: 10)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="hasiltidakdipungut">Hasil Tidak Dipungut</label>
+            <select id="hasiltidakdipungut" required>
+                <option value="">Pilih Hasil</option>
+                <option value="10">Hasil Tidak Dipungut (Nilai: 10)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
+            <label for="talangsadapmepet">Talang Sadap Mepet</label>
+            <select id="talangsadapmepet" required>
+                <option value="">Pilih Hasil</option>
+                <option value="1">Talang Sadap Mepet (Nilai: 1)</option>
+                <option value="0">0 Kesalahan</option>
+            </select>
+            <div class="total"></div>
             <div class="total" id="totalSum">Total: 0</div> <!-- Tempat untuk menampilkan total -->
             <button type="submit">Simpan</button>
         </form>
     </div>
     <script src="script.js"></script>
     <script>
+        function calculateTotal() {
+            const selects = document.querySelectorAll('#formTap4 select');
+            let total = 0;
+
+            selects.forEach(select => {
+                const value = parseFloat(select.value);
+                if (!isNaN(value)) {
+                    total += value;
+                }
+            });
+
+            document.getElementById('totalSum').innerText = `Total: ${total}`;
+        }
+
+        document.querySelectorAll('#formTap4 select').forEach(select => {
+            select.addEventListener('change', calculateTotal);
+        });
+
         document.getElementById('formTap4').addEventListener('submit', function(event) {
-            event.preventDefault(); // Mencegah pengiriman form default
+            event.preventDefault();
 
-            // Mengambil data dari input dan membaginya dengan nilai yang sesuai
-            const data = {
-                lukaKecil: parseFloat(document.getElementById('lukaKecil').value) / 3 || 0,
-                lukaSedang: parseFloat(document.getElementById('lukaSedang').value) / 5 || 0,
-                lukaBesar: parseFloat(document.getElementById('lukaBesar').value) / 7 || 0,
-                kurangDalam: parseFloat(document.getElementById('kurangDalam').value) / 2 || 0,
-                normatif: parseFloat(document.getElementById('normatif').value) / 0.1 || 0, // Pastikan tidak membagi dengan 0
-                rapat: parseFloat(document.getElementById('rapat').value) / 4 || 0,
-                boros: parseFloat(document.getElementById('boros').value) / 6 || 0,
-                sangatBoros: parseFloat(document.getElementById('sangatBoros').value) / 10 || 0,
-                batasDepan: parseFloat(document.getElementById('batasDepan').value) / 2 || 0,
-                batasBelakang: parseFloat(document.getElementById('batasBelakang').value) / 2 || 0 ,
-                sotokan: parseFloat(document.getElementById('sotokan').value) / 5 || 0,
-                petikan: parseFloat(document.getElementById('petikan').value) / 5 || 0,
-                lebih45: parseFloat(document.getElementById('lebih45').value) / 3 || 0,
-                kurang35: parseFloat(document.getElementById('kurang35').value) / 3 || 0,
-                bergelombang: parseFloat(document.getElementById('bergelombang').value) / 2 || 0,
-                mangkok: parseFloat(document.getElementById('mangkok').value) / 3 || 0,
-                bowl: parseFloat(document.getElementById('bowl').value) / 2 || 0,
-                pohonTidakDisadap: parseFloat(document.getElementById('pohonTidakDisadap').value) / 10 || 0,
-                talangMepet: parseFloat(document.getElementById('talangMepet').value) / 1 || 0
-            };
+            const data = {};
+            const selects = document.querySelectorAll('#formTap4 select');
 
-            // Menghitung total
-            const total = Object.values(data).reduce((acc, curr) => acc + curr, 0);
-            document.getElementById('totalSum').innerText = `Total: ${total.toFixed(2)}`; // Menampilkan total dengan 2 desimal
-
+            selects.forEach(select => {
+                data[select.id] = parseFloat(select.value) || 0;
+            });
             // Simpan data ke localStorage
             localStorage.setItem('formDataTap4', JSON.stringify(data));
-
-            // Arahkan ke halaman form_tap5.html
+    
+            // Arahkan ke halaman form_tap4.html
             window.location.href = 'form_tap5.html';
         });
     </script>
