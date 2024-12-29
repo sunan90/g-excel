@@ -70,100 +70,103 @@
     </div>
 
     <script>
-        // Mengambil data dari localStorage
-        const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
-        const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
-        const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
-        const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
-        const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
-        const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
-    
-        // Menampilkan detail penilai
-        if (evaluatorData) {
-            const evaluatorDetails = `
-                <p><strong>Tanggal:</strong> ${evaluatorData.tanggal || 'N/A'}</p>
-                <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
-                <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
-                <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
-                <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
-                <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
-            `;
-            document.getElementById('evaluatorDetails').innerHTML = evaluatorDetails;
-    
-            // Menampilkan foto penyadap jika ada
-            const photoUrl = evaluatorData.fotoPenyadap;
-            if (photoUrl) {
-                const photoElement = document.getElementById('evaluatorPhoto');
-                photoElement.src = photoUrl;
-                photoElement.style.display = 'block';
-            }
+    // Mengambil data dari localStorage
+    const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
+    const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
+    const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
+    const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
+    const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
+    const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
+
+    // Menampilkan detail penilai
+    if (evaluatorData) {
+        const evaluatorDetails = `
+            <p><strong>Tanggal:</strong> ${evaluatorData.tanggal || 'N/A'}</p>
+            <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
+            <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
+            <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
+            <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
+            <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
+        `;
+        document.getElementById('evaluatorDetails').innerHTML = evaluatorDetails;
+
+        // Menampilkan foto penyadap jika ada
+        const photoUrl = evaluatorData.fotoPenyadap;
+        if (photoUrl) {
+            const photoElement = document.getElementById('evaluatorPhoto');
+            photoElement.src = photoUrl;
+            photoElement.style.display = 'block';
         }
-    
-        // Menghitung total
-        const total = [
-            formDataTap1,
-            formDataTap2,
-            formDataTap3,
-            formDataTap4,
-            formDataTap5
-        ].reduce((acc, data) => {
-            if (data) {
-                return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
-            }
-            return acc;
-        }, 0).toFixed(2);
-    
-        // Menampilkan total
-        document.getElementById('totalSum').innerText = `Total: ${total}`;
-    
-        // Menentukan kelas berdasarkan total
-        let classification = 'N/A';
-        const totalValue = parseFloat(total);
-        if (totalValue < 15) {
-            classification = 'Kelas A';
-        } else if (totalValue >= 16 && totalValue <= 25) {
-            classification = 'Kelas B';
-        } else if (totalValue > 25) {
-            classification = 'Kelas C';
+    }
+
+    // Menghitung total
+    const total = [
+        formDataTap1,
+        formDataTap2,
+        formDataTap3,
+        formDataTap4,
+        formDataTap5
+    ].reduce((acc, data) => {
+        if (data) {
+            return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
         }
-    
-        // Menampilkan kelas
-        document.getElementById('classificationResult').innerText = `Kelas: ${classification}`;
-    
-        // Fungsi untuk mencetak data langsung
-        function printData() {
-            setTimeout(() => {
-                window.print(); // Memanggil dialog pencetakan browser setelah jeda
-            }, 100); // Jeda 100ms untuk memastikan konten sudah siap
-        }
-        function goToBarcodePage() {
+        return acc;
+    }, 0);
+
+    // Membagi total menjadi rata-rata (dibagi 5)
+    const averageTotal = (total / 5).toFixed(2);
+
+    // Menampilkan total rata-rata
+    document.getElementById('totalSum').innerText = `Total: ${averageTotal}`;
+
+    // Menentukan kelas berdasarkan rata-rata total
+    let classification = 'N/A';
+    const totalValue = parseFloat(averageTotal);
+    if (totalValue < 15) {
+        classification = 'Kelas A';
+    } else if (totalValue >= 16 && totalValue <= 25) {
+        classification = 'Kelas B';
+    } else if (totalValue > 25) {
+        classification = 'Kelas C';
+    }
+
+    // Menampilkan kelas
+    document.getElementById('classificationResult').innerText = `Kelas: ${classification}`;
+
+    // Fungsi untuk mencetak data langsung
+    function printData() {
+        setTimeout(() => {
+            window.print(); // Memanggil dialog pencetakan browser setelah jeda
+        }, 100); // Jeda 100ms untuk memastikan konten sudah siap
+    }
+    function goToBarcodePage() {
             const barcodeData = `${evaluatorData.tanggal || ''}-${evaluatorData.penilai || ''}-${evaluatorData.afdeling || ''}-${evaluatorData.namaPenyadap || ''}-${evaluatorData.tahunTanam || ''}-${evaluatorData.blok || ''}`;
             localStorage.setItem('barcodeData', barcodeData);
             window.location.href = 'barcode.html';
     }
-    
-        // Fungsi untuk mengunduh data dalam format Excel
-        function downloadData() {
-            // Mengumpulkan data yang akan dimasukkan ke dalam Excel
-            const data = [
-                ["Tanggal", evaluatorData.tanggal || 'N/A'],
-                ["Penilai", evaluatorData.penilai || 'N/A'],
-                ["Afdeling", evaluatorData.afdeling || 'N/A'],
-                ["Nama Penyadap", evaluatorData.namaPenyadap || 'N/A'],
-                ["Tahun Tanam", evaluatorData.tahunTanam || 'N/A'],
-                ["Blok", evaluatorData.blok || 'N/A'],
-                ["Total", total],
-                ["Kelas", classification]
-            ];
-    
-            // Mengonversi data menjadi worksheet
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Rekap Total");
-    
-            // Mengunduh file Excel
-            XLSX.writeFile(wb, "rekap_total.xlsx");
-        }
-    </script>
+
+    // Fungsi untuk mengunduh data dalam format Excel
+    function downloadData() {
+        // Mengumpulkan data yang akan dimasukkan ke dalam Excel
+        const data = [
+            ["Tanggal", evaluatorData.tanggal || 'N/A'],
+            ["Penilai", evaluatorData.penilai || 'N/A'],
+            ["Afdeling", evaluatorData.afdeling || 'N/A'],
+            ["Nama Penyadap", evaluatorData.namaPenyadap || 'N/A'],
+            ["Tahun Tanam", evaluatorData.tahunTanam || 'N/A'],
+            ["Blok", evaluatorData.blok || 'N/A'],
+            ["Total", averageTotal],
+            ["Kelas", classification]
+        ];
+
+        // Mengonversi data menjadi worksheet
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Rekap Total");
+
+        // Mengunduh file Excel
+        XLSX.writeFile(wb, "rekap_total.xlsx");
+    }
+</script>
 </body>
 </html>
