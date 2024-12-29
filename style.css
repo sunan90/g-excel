@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-image: url('gmb.JPG'); 
+    background-image: url('gmb.JPG'); /* Ganti dengan URL foto background */
     background-size: cover;
     background-position: center;
     height: 100vh;
@@ -22,18 +22,18 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 20px rgb(0, 251, 25);
     width: 100%;
-    max-width: 500px;
-    max-height: 80vh; 
+    max-width: 500px; /* Lebar maksimum untuk form */
+    max-height: 80vh; /* Tinggi maksimum untuk kontainer */
     text-align: center;
-    overflow-y: auto;
-    overflow-x: hidden; 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(2px);
+    overflow-y: auto; /* Izinkan gulir vertikal */
+    overflow-x: hidden; /* Sembunyikan gulir horizontal jika ada */
+    backdrop-filter: blur(3px); /* Tambahkan efek blur */
+    -webkit-backdrop-filter: blur(2px); /* Untuk Safari */
 }
 .logo img {
-    max-width: 20%; 
-    height: auto;
-    margin-bottom: 20px;
+    max-width: 20%; /* Atur lebar maksimum logo menjadi 80% dari kontainer */
+    height: auto; /* Memastikan tinggi disesuaikan dengan lebar */
+    margin-bottom: 20px; /* Menambahkan jarak di bawah logo */
 }
 
 h1, h2 {
@@ -79,31 +79,32 @@ button:hover {
         font-size: 14px;
     }
     .footer {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background-color: #000;
-    color: #fff;
-    text-align: center;
-    padding: 10px 0;
-    }
-
-    .footer p {
-    display: inline-block;
-    white-space: nowrap;
-    animation: scrollText 10s linear infinite;
-    }
-
-@keyframes scrollText {
-    0% {
-        transform: translateX(100%);
-    }
-    100% {
-        transform: translateX(-100%);
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background-color: #000;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
     }
     
+    .footer p {
+        display: inline-block;
+        white-space: nowrap;
+        animation: scrollText 10s linear infinite;
     }
+    
+    @keyframes scrollText {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+    
+}
 
 /* Tambahan untuk form_tap */
 .form-section {
@@ -120,7 +121,7 @@ button:hover {
 .form-section input[type="text"], 
 .form-section input[type="number"], 
 .form-section select {
-    width: calc(100% - 22px); 
+    width: calc(100% - 22px); /* Mengurangi padding dan border */
 }
 
 .form-section textarea {
@@ -130,5 +131,5 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-    resize: vertical; 
+    resize: vertical; /* Memungkinkan resize vertikal */
 }
