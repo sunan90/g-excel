@@ -87,13 +87,13 @@ button:hover {
     color: #fff;
     text-align: center;
     padding: 10px 0;
-}
+    }
 
 .footer p {
     display: inline-block;
     white-space: nowrap;
     animation: scrollText 10s linear infinite;
-}
+    }
 
 @keyframes scrollText {
     0% {
@@ -102,9 +102,8 @@ button:hover {
     100% {
         transform: translateX(-100%);
     }
-}
-
-}
+    
+    }
 
 /* Tambahan untuk form_tap */
 .form-section {
