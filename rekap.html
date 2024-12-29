@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo.png"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <!-- Import Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,38 +22,69 @@
         }
         h1 {
             text-align: center;
+            margin-bottom: 20px;
         }
+        .info-container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .details {
+            flex: 1;
+            text-align: left;
+            font-size: 1.2em;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .photo {
+    width: 4cm;
+    height: 6cm;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid black; /* Garis hitam pada kotak */
+    display: flex;
+    align-items: center; /* Pusatkan secara vertikal */
+    justify-content: center; /* Pusatkan secara horizontal */
+    margin-left: 20px;
+    background-color: #f9f9f9; /* Tambahkan latar belakang abu terang jika foto tidak tersedia */
+}
+
         .total {
+            text-align: left;
             margin-top: 20px;
             font-weight: bold;
             font-size: 1.5em;
         }
-        .details {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
         .classification {
+            text-align: left;
             margin-top: 10px;
             font-weight: bold;
             font-size: 1.3em;
         }
-        .photo {
-            display: block;
-            margin: 20px auto;
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
         }
         button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px 15px;
-            font-size: 1em;
+            background: none;
+            border: none;
             cursor: pointer;
+            font-size: 24px; /* Ukuran ikon */
+            color: #333;
+            padding: 10px;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            color: #007bff; /* Warna saat hover */
+            transform: scale(1.1); /* Efek zoom */
+        }
+        button:active {
+            transform: scale(1);
         }
         @media print {
             button {
-                display: auto; /* Sembunyikan tombol saat mencetak */
+                display: none; /* Sembunyikan tombol saat mencetak */
             }
         }
     </style>
@@ -59,14 +92,26 @@
 <body>
     <div class="container" id="printArea">
         <h1>Rekap Total</h1>
-        <div class="details" id="evaluatorDetails"></div>
-        <img id="evaluatorPhoto" class="photo" src="" alt="Foto Penyadap" style="display: none;" />
+        <div class="info-container">
+            <div class="details" id="evaluatorDetails"></div>
+            <img id="evaluatorPhoto" class="photo" src="" alt="Foto Penyadap" style="display: none;" />
+        </div>
         <div class="total" id="totalSum">Total: 0</div>
         <div class="classification" id="classificationResult">Kelas: N/A</div>
-        <button onclick="window.location.href='index.html'">Kembali</button>
-        <button onclick="downloadData()">Unduh Data (Excel)</button>
-        <button onclick="printData()">Print Data</button>
-        <button onclick="goToBarcodePage()">Tampilkan Barcode</button>
+        <div class="button-container">
+            <button onclick="window.location.href='index.html'" title="Kembali">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button onclick="downloadData()" title="Unduh Data">
+                <i class="fas fa-download"></i>
+            </button>
+            <button onclick="printData()" title="Print Data">
+                <i class="fas fa-print"></i>
+            </button>
+            <button onclick="goToBarcodePage()" title="Tampilkan Barcode">
+                <i class="fas fa-barcode"></i>
+            </button>
+        </div>
     </div>
 
     <script>
@@ -136,18 +181,18 @@
     // Fungsi untuk mencetak data langsung
     function printData() {
         setTimeout(() => {
-            window.print(); // Memanggil dialog pencetakan browser setelah jeda
-        }, 100); // Jeda 100ms untuk memastikan konten sudah siap
+            window.print();
+        }, 100);
     }
+
     function goToBarcodePage() {
-            const barcodeData = `${evaluatorData.tanggal || ''}-${evaluatorData.penilai || ''}-${evaluatorData.afdeling || ''}-${evaluatorData.namaPenyadap || ''}-${evaluatorData.tahunTanam || ''}-${evaluatorData.blok || ''}`;
-            localStorage.setItem('barcodeData', barcodeData);
-            window.location.href = 'barcode.html';
+        const barcodeData = `${evaluatorData.tanggal || ''}-${evaluatorData.penilai || ''}-${evaluatorData.afdeling || ''}-${evaluatorData.namaPenyadap || ''}-${evaluatorData.tahunTanam || ''}-${evaluatorData.blok || ''}`;
+        localStorage.setItem('barcodeData', barcodeData);
+        window.location.href = 'barcode.html';
     }
 
     // Fungsi untuk mengunduh data dalam format Excel
     function downloadData() {
-        // Mengumpulkan data yang akan dimasukkan ke dalam Excel
         const data = [
             ["Tanggal", evaluatorData.tanggal || 'N/A'],
             ["Penilai", evaluatorData.penilai || 'N/A'],
@@ -159,14 +204,12 @@
             ["Kelas", classification]
         ];
 
-        // Mengonversi data menjadi worksheet
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Rekap Total");
 
-        // Mengunduh file Excel
         XLSX.writeFile(wb, "rekap_total.xlsx");
     }
-</script>
+    </script>
 </body>
 </html>
