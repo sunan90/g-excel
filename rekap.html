@@ -168,11 +168,11 @@
     let classification = 'N/A';
     const totalValue = parseFloat(averageTotal);
     if (totalValue < 15) {
-        classification = 'Kelas A';
+        classification = 'A';
     } else if (totalValue >= 16 && totalValue <= 25) {
-        classification = 'Kelas B';
+        classification = 'B';
     } else if (totalValue > 25) {
-        classification = 'Kelas C';
+        classification = 'C';
     }
 
     // Menampilkan kelas
