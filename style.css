@@ -89,7 +89,7 @@ button:hover {
     padding: 10px 0;
     }
 
-.footer p {
+    .footer p {
     display: inline-block;
     white-space: nowrap;
     animation: scrollText 10s linear infinite;
