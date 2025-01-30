@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo.png"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <!-- Import Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -37,18 +36,17 @@
             margin: 5px 0;
         }
         .photo {
-    width: 4cm;
-    height: 6cm;
-    object-fit: cover;
-    border-radius: 5px;
-    border: 2px solid black; /* Garis hitam pada kotak */
-    display: flex;
-    align-items: center; /* Pusatkan secara vertikal */
-    justify-content: center; /* Pusatkan secara horizontal */
-    margin-left: 20px;
-    background-color: #f9f9f9; /* Tambahkan latar belakang abu terang jika foto tidak tersedia */
-}
-
+            width: 4cm;
+            height: 6cm;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 20px;
+            background-color: #f9f9f9;
+        }
         .total {
             text-align: left;
             margin-top: 20px;
@@ -70,21 +68,21 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 24px; /* Ukuran ikon */
+            font-size: 24px;
             color: #333;
             padding: 10px;
             transition: color 0.3s ease, transform 0.2s ease;
         }
         button:hover {
-            color: #007bff; /* Warna saat hover */
-            transform: scale(1.1); /* Efek zoom */
+            color: #007bff;
+            transform: scale(1.1);
         }
         button:active {
             transform: scale(1);
         }
         @media print {
             button {
-                display: none; /* Sembunyikan tombol saat mencetak */
+                display: none;
             }
         }
     </style>
@@ -123,27 +121,6 @@
     const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
     const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
 
-    // Menampilkan detail penilai
-    if (evaluatorData) {
-        const evaluatorDetails = `
-            <p><strong>Tanggal:</strong> ${evaluatorData.tanggal || 'N/A'}</p>
-            <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
-            <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
-            <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
-            <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
-            <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
-        `;
-        document.getElementById('evaluatorDetails').innerHTML = evaluatorDetails;
-
-        // Menampilkan foto penyadap jika ada
-        const photoUrl = evaluatorData.fotoPenyadap;
-        if (photoUrl) {
-            const photoElement = document.getElementById('evaluatorPhoto');
-            photoElement.src = photoUrl;
-            photoElement.style.display = 'block';
-        }
-    }
-
     // Menghitung total
     const total = [
         formDataTap1,
@@ -158,11 +135,8 @@
         return acc;
     }, 0);
 
-    // Membagi total menjadi rata-rata (dibagi 5)
+    // Membagi total menjadi rata-rata
     const averageTotal = (total / 5).toFixed(2);
-
-    // Menampilkan total rata-rata
-    document.getElementById('totalSum').innerText = `Total: ${averageTotal}`;
 
     // Menentukan kelas berdasarkan rata-rata total
     let classification = 'N/A';
@@ -175,39 +149,54 @@
         classification = 'C';
     }
 
-    // Menampilkan kelas
-    document.getElementById('classificationResult').innerText = `Kelas: ${classification}`;
+    // Simpan hasil rekap ke localStorage agar bisa diakses kembali
+    const rekapData = {
+        total: averageTotal,
+        classification: classification,
+        evaluatorData: evaluatorData
+    };
+    localStorage.setItem("rekapHasil", JSON.stringify(rekapData));
 
-    // Fungsi untuk mencetak data langsung
+    // Cek apakah ada hasil rekap yang tersimpan
+    const savedRekap = JSON.parse(localStorage.getItem("rekapHasil"));
+
+    if (savedRekap) {
+        document.getElementById('totalSum').innerText = `Total: ${savedRekap.total}`;
+        document.getElementById('classificationResult').innerText = `Kelas: ${savedRekap.classification}`;
+
+        if (savedRekap.evaluatorData) {
+            document.getElementById('evaluatorDetails').innerHTML = `
+                <p><strong>Tanggal:</strong> ${savedRekap.evaluatorData.tanggal || 'N/A'}</p>
+                <p><strong>Penilai:</strong> ${savedRekap.evaluatorData.penilai || 'N/A'}</p>
+                <p><strong>Afdeling:</strong> ${savedRekap.evaluatorData.afdeling || 'N/A'}</p>
+                <p><strong>Nama Penyadap:</strong> ${savedRekap.evaluatorData.namaPenyadap || 'N/A'}</p>
+                <p><strong>Tahun Tanam:</strong> ${savedRekap.evaluatorData.tahunTanam || 'N/A'}</p>
+                <p><strong>Blok:</strong> ${savedRekap.evaluatorData.blok || 'N/A'}</p>
+            `;
+
+            const photoUrl = savedRekap.evaluatorData.fotoPenyadap;
+            if (photoUrl) {
+                const photoElement = document.getElementById('evaluatorPhoto');
+                photoElement.src = photoUrl;
+                photoElement.style.display = 'block';
+            }
+        }
+    }
+
     function printData() {
         setTimeout(() => {
             window.print();
         }, 100);
     }
 
-    function goToBarcodePage() {
-        const barcodeData = `${evaluatorData.tanggal || ''}-${evaluatorData.penilai || ''}-${evaluatorData.afdeling || ''}-${evaluatorData.namaPenyadap || ''}-${evaluatorData.tahunTanam || ''}-${evaluatorData.blok || ''}`;
-        localStorage.setItem('barcodeData', barcodeData);
-        window.location.href = 'barcode.html';
-    }
-
-    // Fungsi untuk mengunduh data dalam format Excel
     function downloadData() {
         const data = [
-            ["Tanggal", evaluatorData.tanggal || 'N/A'],
-            ["Penilai", evaluatorData.penilai || 'N/A'],
-            ["Afdeling", evaluatorData.afdeling || 'N/A'],
-            ["Nama Penyadap", evaluatorData.namaPenyadap || 'N/A'],
-            ["Tahun Tanam", evaluatorData.tahunTanam || 'N/A'],
-            ["Blok", evaluatorData.blok || 'N/A'],
-            ["Total", averageTotal],
-            ["Kelas", classification]
+            ["Total", savedRekap.total],
+            ["Kelas", savedRekap.classification]
         ];
-
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Rekap Total");
-
         XLSX.writeFile(wb, "rekap_total.xlsx");
     }
     </script>
