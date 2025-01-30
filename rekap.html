@@ -23,182 +23,113 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        .info-container {
-            display: flex;
-            align-items: flex-start;
-        }
-        .details {
-            flex: 1;
-            text-align: left;
-            font-size: 1.2em;
-        }
         .details p {
             margin: 5px 0;
         }
-        .photo {
-            width: 4cm;
-            height: 6cm;
-            object-fit: cover;
-            border-radius: 5px;
-            border: 2px solid black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 20px;
-            background-color: #f9f9f9;
-        }
-        .total {
-            text-align: left;
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 1.5em;
-        }
-        .classification {
-            text-align: left;
-            margin-top: 10px;
+        .total, .classification {
             font-weight: bold;
             font-size: 1.3em;
+            margin-top: 10px;
         }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
+        .rekap-list {
             margin-top: 20px;
         }
-        button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            color: #333;
+        .rekap-item {
             padding: 10px;
-            transition: color 0.3s ease, transform 0.2s ease;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            margin-top: 5px;
         }
-        button:hover {
-            color: #007bff;
-            transform: scale(1.1);
-        }
-        button:active {
-            transform: scale(1);
-        }
-        @media print {
-            button {
-                display: none;
-            }
+        .rekap-item:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="printArea">
+    <div class="container">
         <h1>Rekap Total</h1>
-        <div class="info-container">
-            <div class="details" id="evaluatorDetails"></div>
-            <img id="evaluatorPhoto" class="photo" src="" alt="Foto Penyadap" style="display: none;" />
-        </div>
+        <div id="evaluatorDetails"></div>
         <div class="total" id="totalSum">Total: 0</div>
         <div class="classification" id="classificationResult">Kelas: N/A</div>
-        <div class="button-container">
-            <button onclick="window.location.href='index.html'" title="Kembali">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <button onclick="downloadData()" title="Unduh Data">
-                <i class="fas fa-download"></i>
-            </button>
-            <button onclick="printData()" title="Print Data">
-                <i class="fas fa-print"></i>
-            </button>
-            <button onclick="goToBarcodePage()" title="Tampilkan Barcode">
-                <i class="fas fa-barcode"></i>
-            </button>
-        </div>
+        
+        <h2>Riwayat Rekap</h2>
+        <div class="rekap-list" id="rekapList"></div>
     </div>
 
     <script>
-    // Mengambil data dari localStorage
-    const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
-    const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
-    const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
-    const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
-    const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
-    const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
+    function saveRekap() {
+        // Mengambil data dari localStorage
+        const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
+        const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
+        const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
+        const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
+        const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
+        const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
 
-    // Menghitung total
-    const total = [
-        formDataTap1,
-        formDataTap2,
-        formDataTap3,
-        formDataTap4,
-        formDataTap5
-    ].reduce((acc, data) => {
-        if (data) {
+        // Menghitung total
+        const total = [formDataTap1, formDataTap2, formDataTap3, formDataTap4, formDataTap5].reduce((acc, data) => {
             return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
-        }
-        return acc;
-    }, 0);
+        }, 0);
+        const averageTotal = (total / 5).toFixed(2);
 
-    // Membagi total menjadi rata-rata
-    const averageTotal = (total / 5).toFixed(2);
+        // Menentukan kelas
+        let classification = 'N/A';
+        if (averageTotal < 15) classification = 'A';
+        else if (averageTotal >= 16 && averageTotal <= 25) classification = 'B';
+        else if (averageTotal > 25) classification = 'C';
 
-    // Menentukan kelas berdasarkan rata-rata total
-    let classification = 'N/A';
-    const totalValue = parseFloat(averageTotal);
-    if (totalValue < 15) {
-        classification = 'A';
-    } else if (totalValue >= 16 && totalValue <= 25) {
-        classification = 'B';
-    } else if (totalValue > 25) {
-        classification = 'C';
+        // Dapatkan tanggal hari ini
+        const today = new Date();
+        const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+        // Simpan data dengan format berdasarkan tanggal
+        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+        allRekap[dateKey] = {
+            total: averageTotal,
+            classification: classification,
+            evaluatorData: evaluatorData
+        };
+        localStorage.setItem("rekapData", JSON.stringify(allRekap));
+
+        showRekapList();
     }
 
-    // Simpan hasil rekap ke localStorage agar bisa diakses kembali
-    const rekapData = {
-        total: averageTotal,
-        classification: classification,
-        evaluatorData: evaluatorData
-    };
-    localStorage.setItem("rekapHasil", JSON.stringify(rekapData));
+    function showRekapList() {
+        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+        const rekapList = document.getElementById("rekapList");
+        rekapList.innerHTML = "";
 
-    // Cek apakah ada hasil rekap yang tersimpan
-    const savedRekap = JSON.parse(localStorage.getItem("rekapHasil"));
-
-    if (savedRekap) {
-        document.getElementById('totalSum').innerText = `Total: ${savedRekap.total}`;
-        document.getElementById('classificationResult').innerText = `Kelas: ${savedRekap.classification}`;
-
-        if (savedRekap.evaluatorData) {
-            document.getElementById('evaluatorDetails').innerHTML = `
-                <p><strong>Tanggal:</strong> ${savedRekap.evaluatorData.tanggal || 'N/A'}</p>
-                <p><strong>Penilai:</strong> ${savedRekap.evaluatorData.penilai || 'N/A'}</p>
-                <p><strong>Afdeling:</strong> ${savedRekap.evaluatorData.afdeling || 'N/A'}</p>
-                <p><strong>Nama Penyadap:</strong> ${savedRekap.evaluatorData.namaPenyadap || 'N/A'}</p>
-                <p><strong>Tahun Tanam:</strong> ${savedRekap.evaluatorData.tahunTanam || 'N/A'}</p>
-                <p><strong>Blok:</strong> ${savedRekap.evaluatorData.blok || 'N/A'}</p>
-            `;
-
-            const photoUrl = savedRekap.evaluatorData.fotoPenyadap;
-            if (photoUrl) {
-                const photoElement = document.getElementById('evaluatorPhoto');
-                photoElement.src = photoUrl;
-                photoElement.style.display = 'block';
-            }
-        }
+        Object.keys(allRekap).forEach(date => {
+            const rekapItem = document.createElement("div");
+            rekapItem.classList.add("rekap-item");
+            rekapItem.innerText = `Rekap ${date}`;
+            rekapItem.onclick = () => showRekap(date);
+            rekapList.appendChild(rekapItem);
+        });
     }
 
-    function printData() {
-        setTimeout(() => {
-            window.print();
-        }, 100);
+    function showRekap(date) {
+        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+        if (!allRekap[date]) return;
+
+        const rekap = allRekap[date];
+        document.getElementById('totalSum').innerText = `Total: ${rekap.total}`;
+        document.getElementById('classificationResult').innerText = `Kelas: ${rekap.classification}`;
+
+        const evaluatorData = rekap.evaluatorData;
+        document.getElementById('evaluatorDetails').innerHTML = `
+            <p><strong>Tanggal:</strong> ${date}</p>
+            <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
+            <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
+            <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
+            <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
+            <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
+        `;
     }
 
-    function downloadData() {
-        const data = [
-            ["Total", savedRekap.total],
-            ["Kelas", savedRekap.classification]
-        ];
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Rekap Total");
-        XLSX.writeFile(wb, "rekap_total.xlsx");
-    }
+    // Simpan rekap saat halaman dimuat
+    saveRekap();
+    showRekapList();
     </script>
 </body>
 </html>
