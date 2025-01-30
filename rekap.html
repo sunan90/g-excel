@@ -23,13 +23,53 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .info-container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .details {
+            flex: 1;
+            text-align: left;
+            font-size: 1.2em;
+        }
         .details p {
             margin: 5px 0;
+        }
+        .photo {
+            width: 4cm;
+            height: 6cm;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid black;
+            margin-left: 20px;
         }
         .total, .classification {
             font-weight: bold;
             font-size: 1.3em;
             margin-top: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            padding: 10px;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            color: #007bff;
+            transform: scale(1.1);
+        }
+        @media print {
+            button {
+                display: none;
+            }
         }
         .rekap-list {
             margin-top: 20px;
@@ -48,17 +88,26 @@
 <body>
     <div class="container">
         <h1>Rekap Total</h1>
-        <div id="evaluatorDetails"></div>
+        <div class="info-container">
+            <div class="details" id="evaluatorDetails"></div>
+            <img id="evaluatorPhoto" class="photo" src="" alt="Foto Penyadap" style="display: none;" />
+        </div>
         <div class="total" id="totalSum">Total: 0</div>
         <div class="classification" id="classificationResult">Kelas: N/A</div>
         
+        <div class="button-container">
+            <button onclick="window.location.href='index.html'" title="Kembali"><i class="fas fa-arrow-left"></i></button>
+            <button onclick="downloadData()" title="Unduh Data"><i class="fas fa-download"></i></button>
+            <button onclick="printData()" title="Print Data"><i class="fas fa-print"></i></button>
+            <button onclick="goToBarcodePage()" title="Tampilkan Barcode"><i class="fas fa-barcode"></i></button>
+        </div>
+
         <h2>Riwayat Rekap</h2>
         <div class="rekap-list" id="rekapList"></div>
     </div>
 
     <script>
     function saveRekap() {
-        // Mengambil data dari localStorage
         const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
         const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
         const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
@@ -66,23 +115,19 @@
         const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
         const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
 
-        // Menghitung total
         const total = [formDataTap1, formDataTap2, formDataTap3, formDataTap4, formDataTap5].reduce((acc, data) => {
             return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
         }, 0);
         const averageTotal = (total / 5).toFixed(2);
 
-        // Menentukan kelas
         let classification = 'N/A';
         if (averageTotal < 15) classification = 'A';
         else if (averageTotal >= 16 && averageTotal <= 25) classification = 'B';
         else if (averageTotal > 25) classification = 'C';
 
-        // Dapatkan tanggal hari ini
         const today = new Date();
         const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
-        // Simpan data dengan format berdasarkan tanggal
         let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
         allRekap[dateKey] = {
             total: averageTotal,
@@ -125,9 +170,28 @@
             <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
             <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
         `;
+
+        const photoElement = document.getElementById('evaluatorPhoto');
+        if (evaluatorData.fotoPenyadap) {
+            photoElement.src = evaluatorData.fotoPenyadap;
+            photoElement.style.display = 'block';
+        } else {
+            photoElement.style.display = 'none';
+        }
     }
 
-    // Simpan rekap saat halaman dimuat
+    function printData() {
+        window.print();
+    }
+
+    function goToBarcodePage() {
+        window.location.href = 'barcode.html';
+    }
+
+    function downloadData() {
+        alert("Fitur unduh data akan segera hadir!");
+    }
+
     saveRekap();
     showRekapList();
     </script>
