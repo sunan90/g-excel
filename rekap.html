@@ -189,9 +189,45 @@
         window.location.href = 'barcode.html';
     }
 
-    function downloadData() {
-        alert("Fitur unduh data akan segera hadir!");
+   function downloadData() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Judul
+    doc.setFontSize(16);
+    doc.text("Rekap Total", 105, 20, { align: "center" });
+
+    // Ambil data dari halaman
+    const evaluatorDetails = document.getElementById('evaluatorDetails').innerText;
+    const totalSum = document.getElementById('totalSum').innerText;
+    const classificationResult = document.getElementById('classificationResult').innerText;
+
+    let yPosition = 30; // Posisi awal teks
+
+    doc.setFontSize(12);
+    const detailsArray = evaluatorDetails.split("\n"); // Pisahkan data menjadi array
+
+    detailsArray.forEach(detail => {
+        doc.text(detail, 15, yPosition);
+        yPosition += 10;
+    });
+
+    doc.text(totalSum, 15, yPosition);
+    yPosition += 10;
+    doc.text(classificationResult, 15, yPosition);
+
+    // Tambahkan foto jika ada
+    const photoElement = document.getElementById('evaluatorPhoto');
+    if (photoElement.src && photoElement.style.display !== "none") {
+        const imgWidth = 40; // Lebar gambar dalam mm
+        const imgHeight = 60; // Tinggi gambar dalam mm
+        doc.addImage(photoElement, 'JPEG', 150, 30, imgWidth, imgHeight);
     }
+
+    // Simpan PDF
+    doc.save("rekap.pdf");
+}
+
 
     saveRekap();
     showRekapList();
