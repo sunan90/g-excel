@@ -95,6 +95,9 @@
         </div>
         <div class="total" id="totalSum">Total: 0</div>
         <div class="classification" id="classificationResult">Kelas: N/A</div>
+        <h2>Monitoring Laporan</h2>
+        <div class="monitoring-list" id="monitoringList"></div>
+
         
         <div class="button-container">
             <button onclick="window.location.href='index.html'" title="Kembali"><i class="fas fa-arrow-left"></i></button>
@@ -139,6 +142,48 @@
 
         showRekapList();
     }
+        // Daftar afdeling yang harus mengisi laporan
+const allAfdeling = ["Kalimayang", "Kalibajing", "Sumber Waringin", "Gambiran", "Gunung Mayang", "Dampar"];
+
+function updateMonitoring() {
+    let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+    let reportedAfdeling = new Set();
+
+    // Ambil daftar afdeling yang sudah melaporkan
+    Object.values(allRekap).forEach(rekap => {
+        if (rekap.evaluatorData && rekap.evaluatorData.afdeling) {
+            reportedAfdeling.add(rekap.evaluatorData.afdeling);
+        }
+    });
+
+    // Tentukan afdeling yang belum melapor
+    const unreportedAfdeling = allAfdeling.filter(afdeling => !reportedAfdeling.has(afdeling));
+
+    // Tampilkan afdeling yang belum melaporkan
+    const monitoringList = document.getElementById("monitoringList");
+    monitoringList.innerHTML = "";
+
+    if (unreportedAfdeling.length > 0) {
+        unreportedAfdeling.forEach(afdeling => {
+            const listItem = document.createElement("div");
+            listItem.classList.add("rekap-item");
+            listItem.innerText = `Belum Melapor: ${afdeling}`;
+            listItem.style.backgroundColor = "#ffcccc"; // Warna merah untuk perhatian
+            monitoringList.appendChild(listItem);
+        });
+
+        // Notifikasi alert jika ada afdeling yang belum melapor
+        alert(`Perhatian! Afdeling berikut belum melapor: \n- ${unreportedAfdeling.join("\n- ")}`);
+    } else {
+        monitoringList.innerHTML = `<p style="color: green; font-weight: bold;">Semua afdeling sudah melaporkan!</p>`;
+    }
+}
+
+// Panggil fungsi setelah rekap diperbarui
+saveRekap();
+showRekapList();
+updateMonitoring();
+
 
     function showRekapList() {
         let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
