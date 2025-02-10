@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 200px;
+            text-align: center;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #ff7eb3;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff4f88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Masukkan Kode Akses</h2>
+        <input type="password" id="accessCode" placeholder="Kode Akses">
+        <br>
+        <button onclick="checkAccess()">Masuk</button>
+    </div>
+
+    <script>
+        const SECRET_CODE = "admin123"; // Ganti dengan kode yang diinginkan
+
+        function checkAccess() {
+            const code = document.getElementById("accessCode").value;
+            if (code === SECRET_CODE) {
+                window.location.href = "rekap.html"; // Redirect langsung ke halaman utama
+            } else {
+                alert("Kode akses salah!");
+            }
+        }
+    </script>
+</body>
+</html>
