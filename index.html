@@ -42,13 +42,19 @@
             }
         });
         document.addEventListener("DOMContentLoaded", function() {
+            const container = document.querySelector(".container"); // Memastikan tombol ada di dalam container
+
             const lihatRekapButton = document.createElement("button");
             lihatRekapButton.innerText = "Lihat Rekap";
             lihatRekapButton.style.cssText = "margin-top: 20px; padding: 10px 20px; border: none; border-radius: 5px; background: #4caf50; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s;";
+            
             lihatRekapButton.onclick = function() {
                 window.location.href = 'rekap.html';
             };
-            document.body.appendChild(lihatRekapButton);
+
+            if (container) {
+                container.appendChild(lihatRekapButton); // Tambahkan tombol ke dalam container agar terlihat
+            }
         });
     </script>
 </body>
