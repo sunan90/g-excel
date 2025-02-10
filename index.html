@@ -42,20 +42,34 @@
             }
         });
         document.addEventListener("DOMContentLoaded", function() {
-            const container = document.querySelector(".container"); // Memastikan tombol ada di dalam container
+        const form = document.getElementById("loginForm");
 
-            const lihatRekapButton = document.createElement("button");
-            lihatRekapButton.innerText = "Lihat Rekap";
-            lihatRekapButton.style.cssText = "margin-top: 20px; padding: 10px 20px; border: none; border-radius: 5px; background: #4caf50; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s;";
-            
-            lihatRekapButton.onclick = function() {
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.gap = "10px";
+        buttonContainer.style.marginTop = "20px";
+
+        const masukButton = form.querySelector("button");
+        masukButton.style.flex = "1";
+
+        const lihatRekapButton = document.createElement("button");
+        lihatRekapButton.innerText = "Lihat Rekap";
+        lihatRekapButton.style.cssText = "flex: 1; padding: 10px 20px; border: none; border-radius: 5px; background: #4caf50; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s;";
+        
+        lihatRekapButton.onclick = function() {
+            const password = prompt("Masukkan password untuk melihat rekap:");
+            if (password === "sunan90") {
                 window.location.href = 'rekap.html';
-            };
-
-            if (container) {
-                container.appendChild(lihatRekapButton); // Tambahkan tombol ke dalam container agar terlihat
+            } else {
+                alert("Password salah!");
             }
-        });
+        };
+
+        buttonContainer.appendChild(masukButton.cloneNode(true)); // Klon tombol masuk
+        buttonContainer.appendChild(lihatRekapButton);
+
+        form.replaceChild(buttonContainer, masukButton); // Ganti tombol masuk dengan container yang berisi dua tombol
+    });
     </script>
 </body>
 </html>
