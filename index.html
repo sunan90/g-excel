@@ -56,6 +56,7 @@
         lihatRekapButton.innerText = "Lihat Rekap";
         lihatRekapButton.style.cssText = "flex: 1; padding: 10px 20px; border: none; border-radius: 5px; background: #4caf50; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s;";
         
+        lihatRekapButton.type = "button"; // Pastikan tombol tidak mengirim form
         lihatRekapButton.onclick = function() {
             const password = prompt("Masukkan password untuk melihat rekap:");
             if (password === "sunan90") {
@@ -65,10 +66,10 @@
             }
         };
 
-        buttonContainer.appendChild(masukButton.cloneNode(true)); // Klon tombol masuk
+        buttonContainer.appendChild(masukButton); // Gunakan tombol masuk asli
         buttonContainer.appendChild(lihatRekapButton);
 
-        form.replaceChild(buttonContainer, masukButton); // Ganti tombol masuk dengan container yang berisi dua tombol
+        form.appendChild(buttonContainer); // Tambahkan container tombol di dalam form
     });
     </script>
 </body>
