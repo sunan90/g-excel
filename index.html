@@ -41,22 +41,27 @@
                 alert('Username atau password salah!');
             }
         });
-        document.addEventListener("DOMContentLoaded", function() {
+       document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("loginForm");
 
+        // Pastikan tombol masuk sudah ada
+        const masukButton = form.querySelector("button");
+        masukButton.style.flex = "1";
+
+        // Buat div untuk menampung tombol
         const buttonContainer = document.createElement("div");
         buttonContainer.style.display = "flex";
         buttonContainer.style.gap = "10px";
         buttonContainer.style.marginTop = "20px";
+        buttonContainer.style.width = "100%";
 
-        const masukButton = form.querySelector("button");
-        masukButton.style.flex = "1";
-
+        // Buat tombol lihat rekap
         const lihatRekapButton = document.createElement("button");
         lihatRekapButton.innerText = "Lihat Rekap";
         lihatRekapButton.style.cssText = "flex: 1; padding: 10px 20px; border: none; border-radius: 5px; background: #4caf50; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s;";
-        
         lihatRekapButton.type = "button"; // Pastikan tombol tidak mengirim form
+
+        // Event listener untuk meminta password sebelum akses rekap
         lihatRekapButton.onclick = function() {
             const password = prompt("Masukkan password untuk melihat rekap:");
             if (password === "sunan90") {
@@ -66,11 +71,40 @@
             }
         };
 
-        buttonContainer.appendChild(masukButton); // Gunakan tombol masuk asli
+        // Tambahkan tombol ke dalam container
+        buttonContainer.appendChild(masukButton);
         buttonContainer.appendChild(lihatRekapButton);
 
-        form.appendChild(buttonContainer); // Tambahkan container tombol di dalam form
+        // Ganti posisi tombol masuk dengan container tombol
+        form.appendChild(buttonContainer);
+
+        // Tampilkan data yang sudah diisi sebelumnya
+        showRekapList();
     });
+
+    function showRekapList() {
+        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+        const rekapList = document.getElementById("rekapList");
+        if (!rekapList) return;
+        rekapList.innerHTML = "";
+
+        Object.keys(allRekap).forEach(date => {
+            const rekapItem = document.createElement("div");
+            rekapItem.classList.add("rekap-item");
+            rekapItem.innerText = `Rekap ${date}`;
+            rekapItem.onclick = () => showRekap(date);
+            rekapList.appendChild(rekapItem);
+        });
+    }
+
+    function showRekap(date) {
+        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+        if (!allRekap[date]) return;
+
+        const rekap = allRekap[date];
+        document.getElementById('totalSum').innerText = `Total: ${rekap.total}`;
+        document.getElementById('classificationResult').innerText = `Kelas: ${rekap.classification}`;
+    }
     </script>
 </body>
 </html>
