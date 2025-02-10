@@ -44,6 +44,17 @@
         button:hover {
             background: #ff4f88;
         }
+        .monitoring {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .monitoring-item {
+            padding: 5px;
+            border-bottom: 1px solid white;
+        }
     </style>
 </head>
 <body>
@@ -52,17 +63,50 @@
         <input type="password" id="accessCode" placeholder="Kode Akses">
         <br>
         <button onclick="checkAccess()">Masuk</button>
+        
+        <div class="monitoring" id="monitoringSection" style="display:none;">
+            <h3>Monitoring Afdeling</h3>
+            <div id="monitoringList"></div>
+        </div>
     </div>
 
     <script>
         const SECRET_CODE = "admin123"; // Ganti dengan kode yang diinginkan
+        const allAfdeling = ["Kalimayang", "Kalibajing", "Sumber Waringin", "Gambiran", "Gunung Mayang", "Dampar"];
 
         function checkAccess() {
             const code = document.getElementById("accessCode").value;
             if (code === SECRET_CODE) {
-                window.location.href = "rekap.html"; // Redirect langsung ke halaman utama
+                document.getElementById("monitoringSection").style.display = "block";
+                updateMonitoring();
             } else {
                 alert("Kode akses salah!");
+            }
+        }
+
+        function updateMonitoring() {
+            let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+            let reportedAfdeling = new Set();
+
+            Object.values(allRekap).forEach(rekap => {
+                if (rekap.evaluatorData && rekap.evaluatorData.afdeling) {
+                    reportedAfdeling.add(rekap.evaluatorData.afdeling);
+                }
+            });
+
+            const unreportedAfdeling = allAfdeling.filter(afdeling => !reportedAfdeling.has(afdeling));
+            const monitoringList = document.getElementById("monitoringList");
+            monitoringList.innerHTML = "";
+
+            if (unreportedAfdeling.length > 0) {
+                unreportedAfdeling.forEach(afdeling => {
+                    const listItem = document.createElement("div");
+                    listItem.classList.add("monitoring-item");
+                    listItem.innerText = `Belum Melapor: ${afdeling}`;
+                    monitoringList.appendChild(listItem);
+                });
+            } else {
+                monitoringList.innerHTML = `<p style="color: yellow; font-weight: bold;">Semua afdeling sudah melaporkan!</p>`;
             }
         }
     </script>
