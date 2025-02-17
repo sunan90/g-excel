@@ -142,37 +142,31 @@
             };
             localStorage.setItem("rekapData", JSON.stringify(allRekap));
 
-            showRekapList();
-        }
-
-        function updateMonitoring() {
-            let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
-            let reportedAfdeling = new Set();
-
-            Object.values(allRekap).forEach(rekap => {
-                if (rekap.evaluatorData && rekap.evaluatorData.afdeling) {
-                    reportedAfdeling.add(rekap.evaluatorData.afdeling);
-                }
-            });
-
-            const unreportedAfdeling = allAfdeling.filter(afdeling => !reportedAfdeling.has(afdeling));
-
-            const monitoringList = document.getElementById("monitoringList");
-            monitoringList.innerHTML = "";
-
-            if (unreportedAfdeling.length > 0) {
-                unreportedAfdeling.forEach(afdeling => {
-                    const listItem = document.createElement("div");
-                    listItem.classList.add("rekap-item");
-                    listItem.innerText = `Belum Melapor: ${afdeling}`;
-                    listItem.style.backgroundColor = "#ffcccc";
-                    monitoringList.appendChild(listItem);
+            // Mengirim data ke API jika diperlukan
+            try {
+                const response = await fetch("http://localhost:5000/api/rekap", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        total: averageTotal,
+                        classification: classification,
+                        evaluatorData: evaluatorData,
+                        date: dateKey
+                    })
                 });
 
-                alert(`Perhatian! Afdeling berikut belum melapor: \n- ${unreportedAfdeling.join("\n- ")}`);
-            } else {
-                monitoringList.innerHTML = `<p style="color: green; font-weight: bold;">Semua afdeling sudah melaporkan!</p>`;
+                if (!response.ok) {
+                    console.error("Gagal menyimpan data ke server");
+                } else {
+                    console.log("Data berhasil disimpan ke server");
+                }
+            } catch (error) {
+                console.error("Error saat mengirim data ke server:", error);
             }
+
+            showRekapList();
         }
 
         async function showRekapList() {
@@ -180,16 +174,20 @@
                 const response = await fetch("http://localhost:5000/api/rekap");
                 const rekapData = await response.json();
 
-                const rekapList = document.getElementById("rekapList");
-                rekapList.innerHTML = "";
+                if (rekapData && Array.isArray(rekapData)) {
+                    const rekapList = document.getElementById("rekapList");
+                    rekapList.innerHTML = "";
 
-                rekapData.forEach(rekap => {
-                    const rekapItem = document.createElement("div");
-                    rekapItem.classList.add("rekap-item");
-                    rekapItem.innerText = `Rekap ${rekap.date}`;
-                    rekapItem.onclick = () => showRekap(rekap.date);
-                    rekapList.appendChild(rekapItem);
-                });
+                    rekapData.forEach(rekap => {
+                        const rekapItem = document.createElement("div");
+                        rekapItem.classList.add("rekap-item");
+                        rekapItem.innerText = `Rekap ${rekap.date}`;
+                        rekapItem.onclick = () => showRekap(rekap.date);
+                        rekapList.appendChild(rekapItem);
+                    });
+                } else {
+                    console.error("Data rekap tidak valid", rekapData);
+                }
             } catch (error) {
                 console.error("Error mengambil data:", error);
             }
@@ -270,7 +268,6 @@
 
         saveRekap();
         showRekapList();
-        updateMonitoring();
     </script>
 </body>
 </html>
