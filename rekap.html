@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo.png"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,187 +95,182 @@
         </div>
         <div class="total" id="totalSum">Total: 0</div>
         <div class="classification" id="classificationResult">Kelas: N/A</div>
+
         <h2>Monitoring Laporan</h2>
         <div class="monitoring-list" id="monitoringList"></div>
 
-        
+        <h2>Riwayat Rekap</h2>
+        <div class="rekap-list" id="rekapList"></div>
+
         <div class="button-container">
             <button onclick="window.location.href='index.html'" title="Kembali"><i class="fas fa-arrow-left"></i></button>
             <button onclick="downloadData()" title="Unduh Data"><i class="fas fa-download"></i></button>
             <button onclick="printData()" title="Print Data"><i class="fas fa-print"></i></button>
             <button onclick="goToBarcodePage()" title="Tampilkan Barcode"><i class="fas fa-barcode"></i></button>
         </div>
-
-        <h2>Riwayat Rekap</h2>
-        <div class="rekap-list" id="rekapList"></div>
     </div>
 
     <script>
-    function saveRekap() {
-        const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
-        const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
-        const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
-        const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
-        const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
-        const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
+        const allAfdeling = ["Kalimayang", "Kalibajing", "Sumber Waringin", "Gambiran", "Gunung Mayang", "Dampar"];
 
-        const total = [formDataTap1, formDataTap2, formDataTap3, formDataTap4, formDataTap5].reduce((acc, data) => {
-            return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
-        }, 0);
-        const averageTotal = (total / 5).toFixed(2);
+        async function saveRekap() {
+            const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
+            const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
+            const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
+            const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
+            const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
+            const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
 
-        let classification = 'N/A';
-        if (averageTotal < 15) classification = 'A';
-        else if (averageTotal >= 16 && averageTotal <= 25) classification = 'B';
-        else if (averageTotal > 25) classification = 'C';
+            const total = [formDataTap1, formDataTap2, formDataTap3, formDataTap4, formDataTap5].reduce((acc, data) => {
+                return acc + Object.values(data).reduce((sum, value) => sum + (value * (value === data.normatif ? 0.1 : 1)), 0);
+            }, 0);
+            const averageTotal = (total / 5).toFixed(2);
 
-        const today = new Date();
-        const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            let classification = 'N/A';
+            if (averageTotal < 15) classification = 'A';
+            else if (averageTotal >= 16 && averageTotal <= 25) classification = 'B';
+            else if (averageTotal > 25) classification = 'C';
 
-        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
-        allRekap[dateKey] = {
-            total: averageTotal,
-            classification: classification,
-            evaluatorData: evaluatorData
-        };
-        localStorage.setItem("rekapData", JSON.stringify(allRekap));
+            const today = new Date();
+            const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
+            let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+            allRekap[dateKey] = {
+                total: averageTotal,
+                classification: classification,
+                evaluatorData: evaluatorData
+            };
+            localStorage.setItem("rekapData", JSON.stringify(allRekap));
+
+            showRekapList();
+        }
+
+        function updateMonitoring() {
+            let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+            let reportedAfdeling = new Set();
+
+            Object.values(allRekap).forEach(rekap => {
+                if (rekap.evaluatorData && rekap.evaluatorData.afdeling) {
+                    reportedAfdeling.add(rekap.evaluatorData.afdeling);
+                }
+            });
+
+            const unreportedAfdeling = allAfdeling.filter(afdeling => !reportedAfdeling.has(afdeling));
+
+            const monitoringList = document.getElementById("monitoringList");
+            monitoringList.innerHTML = "";
+
+            if (unreportedAfdeling.length > 0) {
+                unreportedAfdeling.forEach(afdeling => {
+                    const listItem = document.createElement("div");
+                    listItem.classList.add("rekap-item");
+                    listItem.innerText = `Belum Melapor: ${afdeling}`;
+                    listItem.style.backgroundColor = "#ffcccc";
+                    monitoringList.appendChild(listItem);
+                });
+
+                alert(`Perhatian! Afdeling berikut belum melapor: \n- ${unreportedAfdeling.join("\n- ")}`);
+            } else {
+                monitoringList.innerHTML = `<p style="color: green; font-weight: bold;">Semua afdeling sudah melaporkan!</p>`;
+            }
+        }
+
+        async function showRekapList() {
+            try {
+                const response = await fetch("http://localhost:5000/api/rekap");
+                const rekapData = await response.json();
+
+                const rekapList = document.getElementById("rekapList");
+                rekapList.innerHTML = "";
+
+                rekapData.forEach(rekap => {
+                    const rekapItem = document.createElement("div");
+                    rekapItem.classList.add("rekap-item");
+                    rekapItem.innerText = `Rekap ${rekap.date}`;
+                    rekapItem.onclick = () => showRekap(rekap.date);
+                    rekapList.appendChild(rekapItem);
+                });
+            } catch (error) {
+                console.error("Error mengambil data:", error);
+            }
+        }
+
+        async function showRekap(date) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/rekap/${date}`);
+                const rekap = await response.json();
+
+                document.getElementById('totalSum').innerText = `Total: ${rekap.total}`;
+                document.getElementById('classificationResult').innerText = `Kelas: ${rekap.classification}`;
+
+                const evaluatorData = rekap.evaluatorData;
+                document.getElementById('evaluatorDetails').innerHTML = `
+                    <p><strong>Tanggal:</strong> ${date}</p>
+                    <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
+                    <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
+                    <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
+                    <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
+                    <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
+                `;
+
+                const photoElement = document.getElementById('evaluatorPhoto');
+                if (evaluatorData.fotoPenyadap) {
+                    photoElement.src = evaluatorData.fotoPenyadap;
+                    photoElement.style.display = 'block';
+                } else {
+                    photoElement.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Error mengambil data:", error);
+            }
+        }
+
+        function printData() {
+            window.print();
+        }
+
+        function goToBarcodePage() {
+            window.location.href = 'barcode.html';
+        }
+
+        function downloadData() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(16);
+            doc.text("Rekap Total", 105, 20, { align: "center" });
+
+            const evaluatorDetails = document.getElementById('evaluatorDetails').innerText;
+            const totalSum = document.getElementById('totalSum').innerText;
+            const classificationResult = document.getElementById('classificationResult').innerText;
+
+            let yPosition = 30;
+
+            doc.setFontSize(12);
+            const detailsArray = evaluatorDetails.split("\n");
+
+            detailsArray.forEach(detail => {
+                doc.text(detail, 15, yPosition);
+                yPosition += 10;
+            });
+
+            doc.text(totalSum, 15, yPosition);
+            yPosition += 10;
+            doc.text(classificationResult, 15, yPosition);
+
+            const photoElement = document.getElementById('evaluatorPhoto');
+            if (photoElement.src && photoElement.style.display !== "none") {
+                const imgWidth = 40;
+                const imgHeight = 60;
+                doc.addImage(photoElement, 'JPEG', 150, 30, imgWidth, imgHeight);
+            }
+
+            doc.save("rekap.pdf");
+        }
+
+        saveRekap();
         showRekapList();
-    }
-        // Daftar afdeling yang harus mengisi laporan
-const allAfdeling = ["Kalimayang", "Kalibajing", "Sumber Waringin", "Gambiran", "Gunung Mayang", "Dampar"];
-
-function updateMonitoring() {
-    let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
-    let reportedAfdeling = new Set();
-
-    // Ambil daftar afdeling yang sudah melaporkan
-    Object.values(allRekap).forEach(rekap => {
-        if (rekap.evaluatorData && rekap.evaluatorData.afdeling) {
-            reportedAfdeling.add(rekap.evaluatorData.afdeling);
-        }
-    });
-
-    // Tentukan afdeling yang belum melapor
-    const unreportedAfdeling = allAfdeling.filter(afdeling => !reportedAfdeling.has(afdeling));
-
-    // Tampilkan afdeling yang belum melaporkan
-    const monitoringList = document.getElementById("monitoringList");
-    monitoringList.innerHTML = "";
-
-    if (unreportedAfdeling.length > 0) {
-        unreportedAfdeling.forEach(afdeling => {
-            const listItem = document.createElement("div");
-            listItem.classList.add("rekap-item");
-            listItem.innerText = `Belum Melapor: ${afdeling}`;
-            listItem.style.backgroundColor = "#ffcccc"; // Warna merah untuk perhatian
-            monitoringList.appendChild(listItem);
-        });
-
-        // Notifikasi alert jika ada afdeling yang belum melapor
-        alert(`Perhatian! Afdeling berikut belum melapor: \n- ${unreportedAfdeling.join("\n- ")}`);
-    } else {
-        monitoringList.innerHTML = `<p style="color: green; font-weight: bold;">Semua afdeling sudah melaporkan!</p>`;
-    }
-}
-
-// Panggil fungsi setelah rekap diperbarui
-saveRekap();
-showRekapList();
-updateMonitoring();
-
-
-    function showRekapList() {
-        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
-        const rekapList = document.getElementById("rekapList");
-        rekapList.innerHTML = "";
-
-        Object.keys(allRekap).forEach(date => {
-            const rekapItem = document.createElement("div");
-            rekapItem.classList.add("rekap-item");
-            rekapItem.innerText = `Rekap ${date}`;
-            rekapItem.onclick = () => showRekap(date);
-            rekapList.appendChild(rekapItem);
-        });
-    }
-
-    function showRekap(date) {
-        let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
-        if (!allRekap[date]) return;
-
-        const rekap = allRekap[date];
-        document.getElementById('totalSum').innerText = `Total: ${rekap.total}`;
-        document.getElementById('classificationResult').innerText = `Kelas: ${rekap.classification}`;
-
-        const evaluatorData = rekap.evaluatorData;
-        document.getElementById('evaluatorDetails').innerHTML = `
-            <p><strong>Tanggal:</strong> ${date}</p>
-            <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
-            <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
-            <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
-            <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
-            <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
-        `;
-
-        const photoElement = document.getElementById('evaluatorPhoto');
-        if (evaluatorData.fotoPenyadap) {
-            photoElement.src = evaluatorData.fotoPenyadap;
-            photoElement.style.display = 'block';
-        } else {
-            photoElement.style.display = 'none';
-        }
-    }
-
-    function printData() {
-        window.print();
-    }
-
-    function goToBarcodePage() {
-        window.location.href = 'barcode.html';
-    }
-
-   function downloadData() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Judul
-    doc.setFontSize(16);
-    doc.text("Rekap Total", 105, 20, { align: "center" });
-
-    // Ambil data dari halaman
-    const evaluatorDetails = document.getElementById('evaluatorDetails').innerText;
-    const totalSum = document.getElementById('totalSum').innerText;
-    const classificationResult = document.getElementById('classificationResult').innerText;
-
-    let yPosition = 30; // Posisi awal teks
-
-    doc.setFontSize(12);
-    const detailsArray = evaluatorDetails.split("\n"); // Pisahkan data menjadi array
-
-    detailsArray.forEach(detail => {
-        doc.text(detail, 15, yPosition);
-        yPosition += 10;
-    });
-
-    doc.text(totalSum, 15, yPosition);
-    yPosition += 10;
-    doc.text(classificationResult, 15, yPosition);
-
-    // Tambahkan foto jika ada
-    const photoElement = document.getElementById('evaluatorPhoto');
-    if (photoElement.src && photoElement.style.display !== "none") {
-        const imgWidth = 40; // Lebar gambar dalam mm
-        const imgHeight = 60; // Tinggi gambar dalam mm
-        doc.addImage(photoElement, 'JPEG', 150, 30, imgWidth, imgHeight);
-    }
-
-    // Simpan PDF
-    doc.save("rekap.pdf");
-}
-
-
-    saveRekap();
-    showRekapList();
+        updateMonitoring();
     </script>
 </body>
 </html>
