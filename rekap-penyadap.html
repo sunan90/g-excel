@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Rekap Penyadap</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; color: #333; }
+    h1, h2, h3 { color: #444; }
+    .rekap-item { background: #e0f7fa; padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 5px; }
+    .rekap-item:hover { background: #b2ebf2; }
+    img { max-width: 200px; display: block; margin: 10px 0; }
+    #rekapDetails ul { padding-left: 20px; }
+    button { padding: 8px 16px; margin: 5px; }
+    input[type="date"] { padding: 6px; margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Rekap Penyadap</h1>
+
+  <div>
+    <label for="filterDate">Filter Tanggal: </label>
+    <input type="date" id="filterDate">
+    <button onclick="filterByDate()">Terapkan</button>
+  </div>
+
+  <h2>Data Penyadap</h2>
+  <div id="evaluatorDetails"></div>
+  <img id="evaluatorPhoto" style="display:none;">
+
+  <h3 id="totalSum">Total: 0</h3>
+  <h3 id="classificationResult">Kelas: N/A</h3>
+
+  <div style="margin-top: 20px;">
+    <button onclick="printData()">Cetak</button>
+    <button onclick="goToBarcodePage()">Ke Barcode</button>
+  </div>
+
+  <h2>Monitoring Afdeling</h2>
+  <div id="monitoringList"></div>
+
+  <h2>Rekap Per Afdeling</h2>
+  <div id="rekapList"></div>
+
+  <div id="rekapDetails" style="margin-top: 20px;"></div>
+
+  <script>
+    const evaluatorData = JSON.parse(localStorage.getItem('penilaiData')) || {};
+    const formDataTap1 = JSON.parse(localStorage.getItem('formDataTap1')) || {};
+    const formDataTap2 = JSON.parse(localStorage.getItem('formDataTap2')) || {};
+    const formDataTap3 = JSON.parse(localStorage.getItem('formDataTap3')) || {};
+    const formDataTap4 = JSON.parse(localStorage.getItem('formDataTap4')) || {};
+    const formDataTap5 = JSON.parse(localStorage.getItem('formDataTap5')) || {};
+
+    function filterByDate() {
+      const selectedDate = document.getElementById('filterDate').value;
+      if (selectedDate) {
+        const evaluatorDate = evaluatorData.tanggal;
+        if (evaluatorDate && evaluatorDate === selectedDate) {
+          displayData();
+        } else {
+          document.getElementById('evaluatorDetails').innerHTML = "<p>No data available for the selected date.</p>";
+          document.getElementById('totalSum').innerText = "Total: 0";
+          document.getElementById('classificationResult').innerText = "Kelas: N/A";
+          document.getElementById('evaluatorPhoto').style.display = 'none';
+        }
+      } else {
+        displayData();
+      }
+    }
+
+    function displayData() {
+      if (evaluatorData) {
+        const details = `
+          <p><strong>Tanggal:</strong> ${evaluatorData.tanggal || 'N/A'}</p>
+          <p><strong>Penilai:</strong> ${evaluatorData.penilai || 'N/A'}</p>
+          <p><strong>Afdeling:</strong> ${evaluatorData.afdeling || 'N/A'}</p>
+          <p><strong>Nama Penyadap:</strong> ${evaluatorData.namaPenyadap || 'N/A'}</p>
+          <p><strong>Tahun Tanam:</strong> ${evaluatorData.tahunTanam || 'N/A'}</p>
+          <p><strong>Blok:</strong> ${evaluatorData.blok || 'N/A'}</p>
+        `;
+        document.getElementById('evaluatorDetails').innerHTML = details;
+
+        const photoUrl = evaluatorData.fotoPenyadap;
+        const photoEl = document.getElementById('evaluatorPhoto');
+        if (photoUrl) {
+          photoEl.src = photoUrl;
+          photoEl.style.display = 'block';
+        } else {
+          photoEl.style.display = 'none';
+        }
+      }
+
+      const formDatas = [formDataTap1, formDataTap2, formDataTap3, formDataTap4, formDataTap5];
+      let total = 0;
+      let validForms = 0;
+
+      formDatas.forEach(data => {
+        if (data && Object.keys(data).length > 0) {
+          validForms++;
+          total += Object.values(data).reduce((sum, value) => sum + Number(value), 0);
+        }
+      });
+
+      const avgTotal = validForms > 0 ? (total / validForms).toFixed(2) : 0;
+      document.getElementById('totalSum').innerText = `Total: ${avgTotal}`;
+
+      let classification = 'N/A';
+      const totalValue = parseFloat(avgTotal);
+      if (totalValue >= 26) {
+        classification = 'Kelas C';
+      } else if (totalValue >= 16) {
+        classification = 'Kelas B';
+      } else if (totalValue > 0) {
+        classification = 'Kelas A';
+      }
+
+      document.getElementById('classificationResult').innerText = `Kelas: ${classification}`;
+    }
+
+    function generateRekapPerAfdeling() {
+      let allRekap = JSON.parse(localStorage.getItem("rekapData")) || {};
+      let rekapPerAfdeling = {};
+      let allAfdeling = ["Kalimayang", "Kalibajing", "Sumber Waringin", "Gambiran", "Gunung Mayang", "Dampar"];
+      let reportedAfdeling = new Set();
+
+      Object.values(allRekap).forEach(rekap => {
+        if (rekap.evaluatorData && rekap.evaluatorData.afdeling) {
+          let afd = rekap.evaluatorData.afdeling;
+          reportedAfdeling.add(afd);
+          if (!rekapPerAfdeling[afd]) {
+            rekapPerAfdeling[afd] = { total: 0, count: 0, records: [] };
+          }
+          let nilaiTotal = parseFloat(rekap.total);
+          if (!isNaN(nilaiTotal)) {
+            rekapPerAfdeling[afd].total += nilaiTotal;
+            rekapPerAfdeling[afd].count++;
+            rekapPerAfdeling[afd].records.push(rekap);
+          }
+        }
+      });
+
+      let unreportedAfdeling = allAfdeling.filter(afd => !reportedAfdeling.has(afd));
+      let monitoringList = document.getElementById("monitoringList");
+      if (monitoringList) {
+        monitoringList.innerHTML = "";
+        if (unreportedAfdeling.length > 0) {
+          unreportedAfdeling.forEach(afd => {
+            let item = document.createElement("div");
+            item.classList.add("rekap-item");
+            item.innerText = `Belum Melapor: ${afd}`;
+            item.style.backgroundColor = "#ffcccc";
+            monitoringList.appendChild(item);
+          });
+          alert(`Perhatian! Afdeling berikut belum melapor:\n- ${unreportedAfdeling.join("\n- ")}`);
+        } else {
+          monitoringList.innerHTML = `<p style="color: green; font-weight: bold;">Semua afdeling sudah melaporkan!</p>`;
+        }
+      }
+
+      localStorage.setItem("rekapPerAfdeling", JSON.stringify(rekapPerAfdeling));
+    }
+
+    function showRekapPerAfdeling() {
+      let rekapPerAfdeling = JSON.parse(localStorage.getItem("rekapPerAfdeling")) || {};
+      let rekapList = document.getElementById("rekapList");
+      if (rekapList) {
+        rekapList.innerHTML = "";
+        Object.keys(rekapPerAfdeling).forEach(afd => {
+          let afdData = rekapPerAfdeling[afd];
+          let item = document.createElement("div");
+          item.classList.add("rekap-item");
+          item.innerHTML = `<strong>${afd}</strong> - Total: ${afdData.total.toFixed(2)}`;
+          item.onclick = () => showAfdelingDetails(afd);
+          rekapList.appendChild(item);
+        });
+      }
+    }
+
+    function showAfdelingDetails(afd) {
+      let rekapPerAfdeling = JSON.parse(localStorage.getItem("rekapPerAfdeling")) || {};
+      if (!rekapPerAfdeling[afd]) return;
+      let afdData = rekapPerAfdeling[afd];
+      let detailsHTML = `<h3>Detail Rekap ${afd}</h3><ul>`;
+      afdData.records.forEach(r => {
+        detailsHTML += `<li>${r.date || "N/A"}: ${r.evaluatorData.namaPenyadap || "N/A"}, Blok: ${r.evaluatorData.blok || "N/A"}, Total: ${r.total}</li>`;
+      });
+      detailsHTML += "</ul>";
+      let rekapDetails = document.getElementById("rekapDetails");
+      if (rekapDetails) {
+        rekapDetails.innerHTML = detailsHTML;
+      }
+    }
+
+    function printData() { window.print(); }
+    function goToBarcodePage() { window.location.href = 'barcode.html'; }
+
+    displayData();
+    generateRekapPerAfdeling();
+    showRekapPerAfdeling();
+  </script>
+
+</body>
+</html>
